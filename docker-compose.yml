@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  library-management-system-postgresql:
+    image: postgres:15.2
+    container_name: library-management-system-postgresql
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - $PWD/data:/var/lib/postgresql/data
