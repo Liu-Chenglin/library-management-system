@@ -10,9 +10,7 @@ describe('BooksController', () => {
     let booksService: BooksService;
 
     const mockBookService = {
-        async create(): Promise<any> {
-            return {}
-        }
+        create: jest.fn()
     } as unknown as BooksService;
 
     beforeEach(async () => {

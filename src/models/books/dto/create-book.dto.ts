@@ -1,17 +1,18 @@
-export class CreateBookDto {
-    title: string;
-    author: string;
-    publisher: string;
-    price: number;
-    status: string;
-    comment: string;
+import {IsPositive, IsString, Min} from "class-validator";
 
-    constructor(title: string, author: string, publisher: string, price: number, status: string, comment: string) {
-        this.title = title;
-        this.author = author;
-        this.publisher = publisher;
-        this.price = price;
-        this.status = status;
-        this.comment = comment;
-    }
+export class CreateBookDto {
+    @IsString()
+    title: string;
+    @IsString()
+    author: string;
+    @IsString()
+    publisher: string;
+    @IsPositive()
+    price: number;
+    @IsString()
+    status: string;
+    @IsString()
+    comment: string;
+    @Min(0)
+    late_fee_per_day: number;
 }
