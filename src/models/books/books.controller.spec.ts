@@ -35,7 +35,7 @@ describe('BooksController', () => {
                 price: 32.5,
                 status: "available",
                 comment: "",
-                late_fee_per_day: 0.5
+                lateFeePerDay: 0.5
             };
             const createdBook = new Book(1, "Nest Guide", "Martin", "fake publisher", 32.5, "available", "", 0.5);
 

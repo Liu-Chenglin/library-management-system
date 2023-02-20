@@ -7,9 +7,9 @@ export class Book {
     private _status: string;
     private _comment: string;
 
-    private _late_fee_per_day: number;
-    
-    constructor(id: number, title: string, author: string, publisher: string, price: number, status: string, comment: string, late_fee_per_day: number) {
+    private _lateFeePerDay: number;
+
+    constructor(id: number, title: string, author: string, publisher: string, price: number, status: string, comment: string, lateFeePerDay: number) {
         this._id = id;
         this._title = title;
         this._author = author;
@@ -17,7 +17,7 @@ export class Book {
         this._price = price;
         this._status = status;
         this._comment = comment;
-        this._late_fee_per_day = late_fee_per_day;
+        this._lateFeePerDay = lateFeePerDay;
     }
 
     get id(): number {
@@ -77,11 +77,11 @@ export class Book {
     }
 
 
-    get late_fee_per_day(): number {
-        return this._late_fee_per_day;
+    get lateFeePerDay(): number {
+        return this._lateFeePerDay;
     }
 
-    set late_fee_per_day(value: number) {
-        this._late_fee_per_day = value;
+    set lateFeePerDay(value: number) {
+        this._lateFeePerDay = value;
     }
 }

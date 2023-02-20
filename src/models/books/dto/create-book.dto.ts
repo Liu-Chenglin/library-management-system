@@ -14,5 +14,5 @@ export class CreateBookDto {
     @IsString()
     comment: string;
     @Min(0)
-    late_fee_per_day: number;
+    lateFeePerDay: number;
 }

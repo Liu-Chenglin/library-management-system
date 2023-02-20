@@ -12,22 +12,7 @@ export class BooksService {
     }
 
     async create(createBookDto: CreateBookDto): Promise<Book> {
-        let bookInformationEntity: BookInformationEntity = await this.bookInformationRepository
-            .findBookInformation(createBookDto.title, createBookDto.author, createBookDto.publisher);
-
-        if (!bookInformationEntity) {
-            bookInformationEntity = this.bookInformationRepository.createBookInformation({
-                title: createBookDto.title,
-                author: createBookDto.author,
-                publisher: createBookDto.publisher,
-                price: createBookDto.price,
-                lateFeePerDay: createBookDto.late_fee_per_day,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            });
-            bookInformationEntity = await this.bookInformationRepository.saveBookInformation(bookInformationEntity);
-        }
-
+        const bookInformationEntity = await this.findOrSaveBookInformationEntity(createBookDto);
         const bookEntity = this.booksRepository.createBook({
             status: createBookDto.status,
             comment: createBookDto.comment,
@@ -35,11 +20,32 @@ export class BooksService {
             updatedAt: new Date(),
             bookInformation: bookInformationEntity
         });
-        const savedBookEntity = await this.booksRepository.saveBook(bookEntity);
 
-        console.log(savedBookEntity.bookInformation.title);
+        const createdBookEntity = await this.booksRepository.createBook(bookEntity);
+        const savedBookEntity = await this.booksRepository.saveBook(createdBookEntity);
+
         return new Book(savedBookEntity.id, savedBookEntity.bookInformation.title, savedBookEntity.bookInformation.author,
             savedBookEntity.bookInformation.publisher, savedBookEntity.bookInformation.price, savedBookEntity.status,
             savedBookEntity.comment, savedBookEntity.bookInformation.lateFeePerDay);
+    }
+
+    private async findOrSaveBookInformationEntity(createBookDto: CreateBookDto): Promise<BookInformationEntity> {
+        let bookInformationEntity = await this.bookInformationRepository
+            .findBookInformation(createBookDto.title, createBookDto.author, createBookDto.publisher);
+
+        if (!bookInformationEntity) {
+            const createdBookInformation = await this.bookInformationRepository.createBookInformation({
+                title: createBookDto.title,
+                author: createBookDto.author,
+                publisher: createBookDto.publisher,
+                price: createBookDto.price,
+                lateFeePerDay: createBookDto.lateFeePerDay,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+            bookInformationEntity = await this.bookInformationRepository.saveBookInformation(createdBookInformation);
+        }
+
+        return bookInformationEntity;
     }
 }

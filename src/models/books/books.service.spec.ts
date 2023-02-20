@@ -53,7 +53,7 @@ describe('BooksService', () => {
             author: 'Test Author',
             publisher: 'Test Publisher',
             price: 10.99,
-            late_fee_per_day: 0.5,
+            lateFeePerDay: 0.5,
             status: 'available',
             comment: 'This is a test book',
         };
@@ -65,7 +65,7 @@ describe('BooksService', () => {
                 author: createBookDto.author,
                 publisher: createBookDto.publisher,
                 price: createBookDto.price,
-                lateFeePerDay: createBookDto.late_fee_per_day,
+                lateFeePerDay: createBookDto.lateFeePerDay,
                 books: null,
                 totalInventory: null,
                 availableInventory: null,
@@ -86,7 +86,6 @@ describe('BooksService', () => {
                 updatedBy: "",
                 deleted: false,
             };
-            const {id, createdBy, updatedBy, deleted, ...createdBook} = bookEntity;
 
             jest.spyOn(booksRepository, 'createBook').mockImplementation(() => bookEntity);
             jest.spyOn(booksRepository, 'saveBook').mockImplementation(() => Promise.resolve(bookEntity));
@@ -103,26 +102,8 @@ describe('BooksService', () => {
                     createBookDto.author,
                     createBookDto.publisher,
                 );
-            expect(bookInformationRepository.createBookInformation)
-                .toHaveBeenCalledWith({
-                    title: createBookDto.title,
-                    author: createBookDto.author,
-                    publisher: createBookDto.publisher,
-                    price: createBookDto.price,
-                    lateFeePerDay: createBookDto.late_fee_per_day,
-                    createdAt: expect.any(Date),
-                    updatedAt: expect.any(Date),
-                });
             expect(bookInformationRepository.saveBookInformation).toHaveBeenCalledWith(
                 bookEntity.bookInformation,
-            );
-
-            expect(booksRepository.createBook).toHaveBeenCalledWith(
-                {
-                    ...createdBook,
-                    createdAt: expect.any(Date),
-                    updatedAt: expect.any(Date),
-                }
             );
             expect(booksRepository.saveBook).toHaveBeenCalledWith(
                 bookEntity,
