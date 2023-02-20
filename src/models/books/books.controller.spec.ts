@@ -1,33 +1,49 @@
 import {BooksController} from './books.controller';
 import {BooksService} from './books.service';
-import {Test} from '@nestjs/testing';
-import {Book} from './book';
 import {CreateBookDto} from "./dto/create-book.dto";
+import {Book} from "./book";
+import {Test, TestingModule} from "@nestjs/testing";
 
 
 describe('BooksController', () => {
     let booksController: BooksController;
     let booksService: BooksService;
 
+    const mockBookService = {
+        async create(): Promise<any> {
+            return {}
+        }
+    } as unknown as BooksService;
+
     beforeEach(async () => {
-        const moduleRef = await Test.createTestingModule({
+        const module: TestingModule = await Test.createTestingModule({
             controllers: [BooksController],
-            providers: [BooksService],
+            providers: [{
+                provide: BooksService,
+                useValue: mockBookService,
+            }],
         }).compile();
 
-        booksService = moduleRef.get<BooksService>(BooksService);
-        booksController = moduleRef.get<BooksController>(BooksController);
+        booksController = module.get<BooksController>(BooksController);
+        booksService = module.get<BooksService>(BooksService);
     });
 
-    describe('create book', () => {
-        it('should return created book when given book is valid', () => {
-            const createdBook = new Book(1, "Nest Guide", "Martin", "fake publisher", 32.5, "available", "");
-            const book = new CreateBookDto("Nest Guide", "Martin", "fake publisher", 32.5, "available", "");
-            jest.spyOn(booksService, 'save').mockImplementation(() => createdBook);
+    describe('createBook', () => {
+        it('should return a book when a valid createBookDto is provided', async () => {
+            const createBookDto: CreateBookDto = {
+                title: "Nest Guide",
+                author: "Martin",
+                publisher: "fake publisher",
+                price: 32.5,
+                status: "available",
+                comment: "",
+                late_fee_per_day: 0.5
+            };
+            const createdBook = new Book(1, "Nest Guide", "Martin", "fake publisher", 32.5, "available", "", 0.5);
 
-            const result: Book = booksController.createBook(book);
+            jest.spyOn(booksService, 'create').mockResolvedValue(createdBook);
 
-            expect(result).toBe(createdBook);
+            expect(await booksController.createBook(createBookDto)).toEqual(createdBook);
         });
     });
 });
