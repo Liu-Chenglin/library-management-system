@@ -4,6 +4,7 @@ import {CreateBookDto} from "./dto/create-book.dto";
 import {BookInformationEntity} from "./entities/book-information.entity";
 import {BooksRepository} from "./books.repository";
 import {BookInformationRepository} from "./book-information.repository";
+import {BooksMapper} from "../../utils/mappers/books.mapper";
 
 @Injectable()
 export class BooksService {
@@ -13,6 +14,7 @@ export class BooksService {
 
     async create(createBookDto: CreateBookDto): Promise<Book> {
         const bookInformationEntity = await this.findOrSaveBookInformationEntity(createBookDto);
+
         const bookEntity = this.booksRepository.createBook({
             status: createBookDto.status,
             comment: createBookDto.comment,
@@ -20,13 +22,9 @@ export class BooksService {
             updatedAt: new Date(),
             bookInformation: bookInformationEntity
         });
+        const savedBookEntity = await this.booksRepository.saveBook(bookEntity);
 
-        const createdBookEntity = await this.booksRepository.createBook(bookEntity);
-        const savedBookEntity = await this.booksRepository.saveBook(createdBookEntity);
-
-        return new Book(savedBookEntity.id, savedBookEntity.bookInformation.title, savedBookEntity.bookInformation.author,
-            savedBookEntity.bookInformation.publisher, savedBookEntity.bookInformation.price, savedBookEntity.status,
-            savedBookEntity.comment, savedBookEntity.bookInformation.lateFeePerDay);
+        return BooksMapper.toModel(savedBookEntity);
     }
 
     private async findOrSaveBookInformationEntity(createBookDto: CreateBookDto): Promise<BookInformationEntity> {
