@@ -9,11 +9,21 @@ export class BooksRepository {
     constructor(@InjectRepository(BookEntity) private readonly repository: Repository<BookEntity>) {
     }
 
-    createBook(bookEntity: DeepPartial<BookEntity>) {
+    async findOne(condition: {}): Promise<BookEntity> {
+        return this.repository.findOne({
+            where: {...condition}
+        });
+    }
+
+    create(bookEntity: DeepPartial<BookEntity>) {
         return this.repository.create(bookEntity);
     }
 
-    async saveBook(bookEntity: BookEntity) {
+    async save(bookEntity: BookEntity) {
         return this.repository.save(bookEntity);
+    }
+
+    async delete(id: number): Promise<void> {
+        await this.repository.delete(id);
     }
 }

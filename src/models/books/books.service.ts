@@ -16,20 +16,22 @@ export class BooksService {
     async create(createBookDto: CreateBookDto): Promise<Book> {
         const bookInformationEntity = await this.findOrSaveBookInformationEntity(createBookDto);
 
-        const bookEntity = this.booksRepository.createBook({
+        const bookEntity = this.booksRepository.create({
             status: createBookDto.status,
             comment: createBookDto.comment,
             createdAt: new Date(),
             updatedAt: new Date(),
             bookInformation: bookInformationEntity
         });
-        const savedBookEntity = await this.booksRepository.saveBook(bookEntity);
+        const savedBookEntity = await this.booksRepository.save(bookEntity);
 
         return BooksMapper.toModel(savedBookEntity);
     }
 
-    delete(bookId: number) {
-        
+    async delete(bookId: number) {
+        const bookEntity = this.booksRepository.findOne({id: bookId});
+
+        await this.booksRepository.delete(bookId);
     }
 
     private async findOrSaveBookInformationEntity(createBookDto: CreateBookDto): Promise<BookInformationEntity> {

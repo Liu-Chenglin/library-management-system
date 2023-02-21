@@ -16,7 +16,7 @@ export class BooksController {
 
     @Delete(':id')
     @HttpCode(204)
-    async deleteBook(@Param('id') id: number) {
-        this.booksService.delete(id);
+    async deleteBook(@Param('id') bookId: number) {
+        await this.booksService.delete(bookId);
     }
 }

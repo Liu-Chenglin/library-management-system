@@ -13,8 +13,10 @@ describe('BooksService', () => {
     let booksRepository: BooksRepository;
 
     const mockBookRepository = {
-        createBook: jest.fn(),
-        saveBook: jest.fn()
+        create: jest.fn(),
+        save: jest.fn(),
+        findOne: jest.fn(),
+        delete: jest.fn()
     } as unknown as BooksRepository;
 
     const mockBookInformationRepository = {
@@ -88,8 +90,8 @@ describe('BooksService', () => {
                 deleted: false,
             };
 
-            jest.spyOn(booksRepository, 'createBook').mockImplementation(() => bookEntity);
-            jest.spyOn(booksRepository, 'saveBook').mockImplementation(() => Promise.resolve(bookEntity));
+            jest.spyOn(booksRepository, 'create').mockImplementation(() => bookEntity);
+            jest.spyOn(booksRepository, 'save').mockImplementation(() => Promise.resolve(bookEntity));
 
             jest.spyOn(bookInformationRepository, 'findBookInformation').mockResolvedValue(undefined);
             jest.spyOn(bookInformationRepository, 'createBookInformation').mockImplementation(() => bookInformationEntity);
@@ -107,10 +109,34 @@ describe('BooksService', () => {
             expect(bookInformationRepository.saveBookInformation).toHaveBeenCalledWith(
                 bookEntity.bookInformation,
             );
-            expect(booksRepository.saveBook).toHaveBeenCalledWith(
+            expect(booksRepository.save).toHaveBeenCalledWith(
                 bookEntity,
             );
             expect(result).toEqual(expectedBook);
+        });
+    });
+
+    describe('delete', () => {
+        it('should delete book when book exists', function () {
+            const bookEntity: BookEntity = {
+                id: 1,
+                status: "test status",
+                comment: "test comment",
+                bookInformation: null,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                createdBy: "",
+                updatedBy: "",
+                deleted: false,
+            };
+
+            jest.spyOn(booksRepository, "findOne").mockImplementation(() => Promise.resolve(bookEntity));
+            jest.spyOn(booksRepository, "delete").mockImplementation();
+
+            service.delete(1);
+
+            expect(booksRepository.findOne).toHaveBeenCalledWith({id: 1});
+            expect(booksRepository.delete).toHaveBeenCalledWith(1);
         });
     });
 });
