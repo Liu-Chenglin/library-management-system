@@ -28,6 +28,10 @@ export class BooksService {
         return BooksMapper.toModel(savedBookEntity);
     }
 
+    delete(bookId: number) {
+        
+    }
+
     private async findOrSaveBookInformationEntity(createBookDto: CreateBookDto): Promise<BookInformationEntity> {
         let bookInformationEntity = await this.bookInformationRepository
             .findBookInformation(createBookDto.title, createBookDto.author, createBookDto.publisher);

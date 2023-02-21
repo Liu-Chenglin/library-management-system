@@ -13,7 +13,8 @@ describe('BooksController', () => {
     let app: INestApplication;
 
     const mockBookService = {
-        create: jest.fn()
+        create: jest.fn(),
+        delete: jest.fn(),
     } as unknown as BooksService;
 
     beforeEach(async () => {
@@ -74,6 +75,17 @@ describe('BooksController', () => {
 
             expect(response.body.message).toContain('title should not be empty');
             expect(response.body.message).toContain('title must be a string');
+        });
+    });
+
+    describe('deleteBook', () => {
+        it('should delete the book when given book exists', async () => {
+            jest.spyOn(booksService, 'delete').mockImplementation(() => {
+            });
+
+            await request(app.getHttpServer())
+                .delete('/books/1')
+                .expect(HttpStatus.NO_CONTENT);
         });
     });
 });
