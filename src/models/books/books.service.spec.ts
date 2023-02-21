@@ -5,6 +5,7 @@ import {BookInformationRepository} from "./book-information.repository";
 import {BooksRepository} from "./books.repository";
 import {CreateBookDto} from "./dto/create-book.dto";
 import {BookEntity} from "./entities/book.entity";
+import {BooksMapper} from "../../utils/mappers/books.mapper";
 
 describe('BooksService', () => {
     let service: BooksService;
@@ -94,7 +95,8 @@ describe('BooksService', () => {
             jest.spyOn(bookInformationRepository, 'createBookInformation').mockImplementation(() => bookInformationEntity);
             jest.spyOn(bookInformationRepository, 'saveBookInformation').mockImplementation(() => Promise.resolve(bookInformationEntity));
 
-            await service.create(createBookDto);
+            const result = await service.create(createBookDto);
+            const expectedBook = BooksMapper.toModel(bookEntity);
 
             expect(bookInformationRepository.findBookInformation)
                 .toHaveBeenCalledWith(
@@ -108,6 +110,7 @@ describe('BooksService', () => {
             expect(booksRepository.saveBook).toHaveBeenCalledWith(
                 bookEntity,
             );
+            expect(result).toEqual(expectedBook);
         });
     });
 });
