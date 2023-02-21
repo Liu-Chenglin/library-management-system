@@ -5,10 +5,11 @@ import {BookInformationEntity} from "./entities/book-information.entity";
 import {BooksRepository} from "./books.repository";
 import {BookInformationRepository} from "./book-information.repository";
 import {BooksMapper} from "../../utils/mappers/books.mapper";
+import {BookInformationMapper} from "../../utils/mappers/book-information.mapper";
 
 @Injectable()
 export class BooksService {
-    constructor(private booksRepository: BooksRepository,
+    constructor(private readonly booksRepository: BooksRepository,
                 private readonly bookInformationRepository: BookInformationRepository) {
     }
 
@@ -32,15 +33,8 @@ export class BooksService {
             .findBookInformation(createBookDto.title, createBookDto.author, createBookDto.publisher);
 
         if (!bookInformationEntity) {
-            const createdBookInformation = await this.bookInformationRepository.createBookInformation({
-                title: createBookDto.title,
-                author: createBookDto.author,
-                publisher: createBookDto.publisher,
-                price: createBookDto.price,
-                lateFeePerDay: createBookDto.lateFeePerDay,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            });
+            const createdBookInformation = await this.bookInformationRepository
+                .createBookInformation(BookInformationMapper.toEntityForCreating(createBookDto));
             bookInformationEntity = await this.bookInformationRepository.saveBookInformation(createdBookInformation);
         }
 
