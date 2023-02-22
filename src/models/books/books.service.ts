@@ -6,6 +6,7 @@ import {BooksRepository} from "./books.repository";
 import {BookInformationRepository} from "./book-information.repository";
 import {BooksMapper} from "../../utils/mappers/books.mapper";
 import {BookInformationMapper} from "../../utils/mappers/book-information.mapper";
+import {UpdateBookDto} from "./dto/update-book.dto";
 
 @Injectable()
 export class BooksService {
@@ -36,6 +37,9 @@ export class BooksService {
         }
 
         await this.booksRepository.delete(bookId);
+    }
+
+    update(updateBookDto: UpdateBookDto) {
     }
 
     private async findOrSaveBookInformationEntity(createBookDto: CreateBookDto): Promise<BookInformationEntity> {

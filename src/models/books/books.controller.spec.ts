@@ -15,6 +15,7 @@ describe('BooksController', () => {
     const mockBookService = {
         create: jest.fn(),
         delete: jest.fn(),
+        update: jest.fn()
     } as unknown as BooksService;
 
     beforeEach(async () => {
@@ -91,6 +92,17 @@ describe('BooksController', () => {
             jest.spyOn(booksService, 'delete').mockRejectedValue(new HttpException('Book Not Found', HttpStatus.NOT_FOUND));
 
             await expect(booksController.deleteBook(1)).rejects.toThrow(HttpException);
+        });
+    });
+
+    describe('updateBook', () => {
+        it('should update status of a book', async () => {
+            jest.spyOn(booksService, 'update').mockImplementation();
+
+            await request(app.getHttpServer())
+                .patch('/books/1')
+                .send({status: 'lost'})
+                .expect(HttpStatus.OK);
         });
     });
 });
