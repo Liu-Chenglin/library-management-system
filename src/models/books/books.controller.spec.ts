@@ -104,5 +104,15 @@ describe('BooksController', () => {
                 .send({status: 'lost'})
                 .expect(HttpStatus.OK);
         });
+
+        it('should return NOT FOUND when given book does not exist', async () => {
+            const updateBookDto = {
+                status: "lost",
+                comment: null
+            }
+            jest.spyOn(booksService, 'update').mockRejectedValue(new HttpException('Book Not Found', HttpStatus.NOT_FOUND));
+
+            await expect(booksController.updateBook(1, updateBookDto)).rejects.toThrow(HttpException);
+        });
     });
 });
