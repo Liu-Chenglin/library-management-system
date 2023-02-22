@@ -282,5 +282,13 @@ describe('BooksService', () => {
 
             expect(books).toEqual(expectedBooks);
         });
+
+        it('should return an empty array when no matching books are found', async () => {
+            jest.spyOn(booksRepository, 'findMany').mockResolvedValue([]);
+
+            const books = await service.find('Java', 'Joshua Bloch', 'Addison-Wesley');
+
+            expect(books).toEqual([]);
+        });
     });
 });

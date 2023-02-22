@@ -119,8 +119,8 @@ describe('BooksController', () => {
 
     describe('findBooks', () => {
         const books = [
-            new Book(1, 'Book 1', 'Author 1', 'Publisher 1', 9.99, 'available', '', 0.5),
-            new Book(2, 'Book 2', 'Author 2', 'Publisher 2', 19.99, 'available', '', 0.75),
+            new Book(1, 'Book 1', 'Author 1', 'Publisher', 9.99, 'available', '', 0.5),
+            new Book(2, 'Book 2', 'Author 2', 'Publisher', 19.99, 'available', '', 0.75),
         ];
         it('should return all books', async () => {
             jest.spyOn(booksService, 'find').mockResolvedValue(books);
@@ -129,6 +129,28 @@ describe('BooksController', () => {
 
             expect(result).toEqual(books);
             expect(booksService.find).toHaveBeenCalledWith(undefined, undefined, undefined);
+        });
+
+
+        it('should filter books by title', async () => {
+            jest.spyOn(booksService, 'find').mockResolvedValue([books[0]]);
+
+            expect(await booksController.getBooks('Book 1')).toEqual([books[0]]);
+            expect(booksService.find).toHaveBeenCalledWith('Book 1', undefined, undefined);
+        });
+
+        it('should filter books by author', async () => {
+            jest.spyOn(booksService, 'find').mockResolvedValue([books[1]]);
+
+            expect(await booksController.getBooks(undefined, 'Author 2')).toEqual([books[1]]);
+            expect(booksService.find).toHaveBeenCalledWith(undefined, 'Author 2', undefined);
+        });
+
+        it('should filter books by publisher', async () => {
+            jest.spyOn(booksService, 'find').mockResolvedValue([books[0], books[1]]);
+
+            expect(await booksController.getBooks(undefined, undefined, 'Publisher')).toEqual([books[0], books[1]]);
+            expect(booksService.find).toHaveBeenCalledWith(undefined, undefined, 'Publisher');
         });
     });
 });
