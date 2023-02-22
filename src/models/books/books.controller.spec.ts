@@ -15,7 +15,8 @@ describe('BooksController', () => {
     const mockBookService = {
         create: jest.fn(),
         delete: jest.fn(),
-        update: jest.fn()
+        update: jest.fn(),
+        find: jest.fn()
     } as unknown as BooksService;
 
     beforeEach(async () => {
@@ -113,6 +114,21 @@ describe('BooksController', () => {
             jest.spyOn(booksService, 'update').mockRejectedValue(new HttpException('Book Not Found', HttpStatus.NOT_FOUND));
 
             await expect(booksController.updateBook(1, updateBookDto)).rejects.toThrow(HttpException);
+        });
+    });
+
+    describe('findBooks', () => {
+        const books = [
+            new Book(1, 'Book 1', 'Author 1', 'Publisher 1', 9.99, 'available', '', 0.5),
+            new Book(2, 'Book 2', 'Author 2', 'Publisher 2', 19.99, 'available', '', 0.75),
+        ];
+        it('should return all books', async () => {
+            jest.spyOn(booksService, 'find').mockResolvedValue(books);
+
+            const result = await booksController.getBooks();
+
+            expect(result).toEqual(books);
+            expect(booksService.find).toHaveBeenCalledWith(undefined, undefined, undefined);
         });
     });
 });

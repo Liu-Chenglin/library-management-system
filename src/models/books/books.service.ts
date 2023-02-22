@@ -66,4 +66,11 @@ export class BooksService {
 
         return bookInformationEntity;
     }
+
+    async find(title: string, author: string, publisher: string): Promise<Book[]> {
+        return Promise.resolve([
+            new Book(1, 'Book 1', 'Author 1', 'Publisher 1', 9.99, 'available', '', 0.5),
+            new Book(2, 'Book 2', 'Author 2', 'Publisher 2', 19.99, 'available', '', 0.75),
+        ]);
+    }
 }

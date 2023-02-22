@@ -2,10 +2,12 @@ import {
     Body,
     Controller,
     Delete,
+    Get,
     HttpCode,
     Param,
     Patch,
     Post,
+    Query,
     UseFilters,
     UsePipes,
     ValidationPipe
@@ -37,5 +39,15 @@ export class BooksController {
     @Patch(':id')
     async updateBook(@Param('id') bookId: number, @Body() updateBookDto: UpdateBookDto) {
         return await this.booksService.update(bookId, updateBookDto);
+    }
+
+
+    @Get()
+    async getBooks(
+        @Query('title') title?: string,
+        @Query('author') author?: string,
+        @Query('publisher') publisher?: string,
+    ): Promise<Book[]> {
+        return await this.booksService.find(title, author, publisher);
     }
 }
