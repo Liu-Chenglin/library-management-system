@@ -7,6 +7,7 @@ import {BookInformationRepository} from "./book-information.repository";
 import {BooksMapper} from "../../utils/mappers/books.mapper";
 import {BookInformationMapper} from "../../utils/mappers/book-information.mapper";
 import {UpdateBookDto} from "./dto/update-book.dto";
+import {BookInformation} from "./book-information";
 
 @Injectable()
 export class BooksService {
@@ -45,10 +46,10 @@ export class BooksService {
         return BooksMapper.toModel(updatedBookEntity);
     }
 
-    async find(title: string, author: string, publisher: string): Promise<Book[]> {
-        const bookEntities = await this.booksRepository.findMany(title, author, publisher);
+    async find(title: string, author: string, publisher: string): Promise<BookInformation[]> {
+        const bookInformationEntities = await this.bookInformationRepository.findMany(title, author, publisher);
 
-        return bookEntities.map((bookEntity) => BooksMapper.toModel(bookEntity));
+        return bookInformationEntities.map((bookInformationEntity) => BookInformationMapper.toModel(bookInformationEntity));
     }
 
     private async findOneByIdOrThrow(bookId: number) {

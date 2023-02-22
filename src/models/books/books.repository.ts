@@ -26,20 +26,4 @@ export class BooksRepository {
     create(bookEntity: DeepPartial<BookEntity>) {
         return this.repository.create(bookEntity);
     }
-
-    async findMany(title?: string, author?: string, publisher?: string): Promise<BookEntity[]> {
-        const queryBuilder = this.repository.createQueryBuilder('book');
-
-        if (title) {
-            queryBuilder.where(`book.title = :title`, {title});
-        }
-        if (author) {
-            queryBuilder.andWhere(`book.author = :author`, {author});
-        }
-        if (publisher) {
-            queryBuilder.andWhere(`book.publisher = :publisher`, {publisher});
-        }
-
-        return await queryBuilder.getMany();
-    }
 }

@@ -1,6 +1,7 @@
 import {CreateBookDto} from "../../models/books/dto/create-book.dto";
 import {BookInformationEntity} from "../../models/books/entities/book-information.entity";
 import {DeepPartial} from "typeorm/common/DeepPartial";
+import {BookInformation} from "../../models/books/book-information";
 
 export class BookInformationMapper {
     static toEntityForCreating(createBookDto: CreateBookDto): DeepPartial<BookInformationEntity> {
@@ -13,5 +14,17 @@ export class BookInformationMapper {
             createdAt: new Date(),
             updatedAt: new Date()
         }
+    }
+
+    static toModel(bookInformationEntity: BookInformationEntity): BookInformation {
+        return new BookInformation(
+            bookInformationEntity.id,
+            bookInformationEntity.title,
+            bookInformationEntity.author,
+            bookInformationEntity.publisher,
+            bookInformationEntity.price,
+            bookInformationEntity.totalInventory,
+            bookInformationEntity.availableInventory,
+            bookInformationEntity.lateFeePerDay)
     }
 }

@@ -6,6 +6,7 @@ import {Test, TestingModule} from "@nestjs/testing";
 import {HttpException, HttpStatus, INestApplication} from "@nestjs/common";
 import {AppModule} from "../../app.module";
 import * as request from 'supertest';
+import {BookInformation} from "./book-information";
 
 describe('BooksController', () => {
     let booksController: BooksController;
@@ -118,38 +119,38 @@ describe('BooksController', () => {
     });
 
     describe('findBooks', () => {
-        const books = [
-            new Book(1, 'Book 1', 'Author 1', 'Publisher', 9.99, 'available', '', 0.5),
-            new Book(2, 'Book 2', 'Author 2', 'Publisher', 19.99, 'available', '', 0.75),
+        const bookInformation = [
+            new BookInformation(1, "Book 1", "F. Scott Fitzgerald", "Publisher", 12.99, 10, 8, 0.25),
+            new BookInformation(2, "To Kill a Mockingbird", "Author 2", "Publisher", 10.99, 5, 3, 0.20),
         ];
         it('should return all books', async () => {
-            jest.spyOn(booksService, 'find').mockResolvedValue(books);
+            jest.spyOn(booksService, 'find').mockResolvedValue(bookInformation);
 
             const result = await booksController.getBooks();
 
-            expect(result).toEqual(books);
+            expect(result).toEqual(bookInformation);
             expect(booksService.find).toHaveBeenCalledWith(undefined, undefined, undefined);
         });
 
 
         it('should filter books by title', async () => {
-            jest.spyOn(booksService, 'find').mockResolvedValue([books[0]]);
+            jest.spyOn(booksService, 'find').mockResolvedValue([bookInformation[0]]);
 
-            expect(await booksController.getBooks('Book 1')).toEqual([books[0]]);
+            expect(await booksController.getBooks('Book 1')).toEqual([bookInformation[0]]);
             expect(booksService.find).toHaveBeenCalledWith('Book 1', undefined, undefined);
         });
 
         it('should filter books by author', async () => {
-            jest.spyOn(booksService, 'find').mockResolvedValue([books[1]]);
+            jest.spyOn(booksService, 'find').mockResolvedValue([bookInformation[1]]);
 
-            expect(await booksController.getBooks(undefined, 'Author 2')).toEqual([books[1]]);
+            expect(await booksController.getBooks(undefined, 'Author 2')).toEqual([bookInformation[1]]);
             expect(booksService.find).toHaveBeenCalledWith(undefined, 'Author 2', undefined);
         });
 
         it('should filter books by publisher', async () => {
-            jest.spyOn(booksService, 'find').mockResolvedValue([books[0], books[1]]);
+            jest.spyOn(booksService, 'find').mockResolvedValue([bookInformation[0], bookInformation[1]]);
 
-            expect(await booksController.getBooks(undefined, undefined, 'Publisher')).toEqual([books[0], books[1]]);
+            expect(await booksController.getBooks(undefined, undefined, 'Publisher')).toEqual([bookInformation[0], bookInformation[1]]);
             expect(booksService.find).toHaveBeenCalledWith(undefined, undefined, 'Publisher');
         });
     });

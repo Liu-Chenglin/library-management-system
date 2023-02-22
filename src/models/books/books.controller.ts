@@ -17,6 +17,7 @@ import {BooksService} from './books.service';
 import {CreateBookDto} from "./dto/create-book.dto";
 import {HttpExceptionFilter} from "../../common/exceptions/handlers/http-exception.filter";
 import {UpdateBookDto} from "./dto/update-book.dto";
+import {BookInformation} from "./book-information";
 
 @Controller('/books')
 @UseFilters(new HttpExceptionFilter())
@@ -47,7 +48,7 @@ export class BooksController {
         @Query('title') title?: string,
         @Query('author') author?: string,
         @Query('publisher') publisher?: string,
-    ): Promise<Book[]> {
+    ): Promise<BookInformation[]> {
         return await this.booksService.find(title, author, publisher);
     }
 }

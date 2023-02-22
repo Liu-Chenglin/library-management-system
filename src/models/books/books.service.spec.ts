@@ -7,7 +7,8 @@ import {CreateBookDto} from "./dto/create-book.dto";
 import {BookEntity} from "./entities/book.entity";
 import {BooksMapper} from "../../utils/mappers/books.mapper";
 import {HttpException} from "@nestjs/common";
-import {Book} from "./book";
+import {BookInformation} from "./book-information";
+import {BookInformationMapper} from "../../utils/mappers/book-information.mapper";
 
 describe('BooksService', () => {
     let service: BooksService;
@@ -18,14 +19,14 @@ describe('BooksService', () => {
         create: jest.fn(),
         save: jest.fn(),
         findOneById: jest.fn(),
-        delete: jest.fn(),
-        findMany: jest.fn()
+        delete: jest.fn()
     } as unknown as BooksRepository;
 
     const mockBookInformationRepository = {
         findBookInformation: jest.fn(),
         createBookInformation: jest.fn(),
         saveBookInformation: jest.fn(),
+        findMany: jest.fn()
     } as unknown as BookInformationRepository;
 
     beforeEach(async () => {
@@ -221,74 +222,58 @@ describe('BooksService', () => {
 
     describe('find', () => {
         it('should return an array of matching books', async () => {
-            const bookEntities: BookEntity[] = [
+            const bookInformationEntities: BookInformationEntity[] = [
                 {
+
                     id: 1,
-                    status: 'available',
-                    comment: 'A great book',
-                    bookInformation: {
-                        id: 1,
-                        title: 'The Lord of the Rings',
-                        author: 'J.R.R. Tolkien',
-                        publisher: 'Bloomsbury Publishing',
-                        price: 12,
-                        books: [],
-                        availableInventory: null,
-                        totalInventory: null,
-                        lateFeePerDay: 0.5,
-                        createdAt: new Date('2022-01-01'),
-                        updatedAt: new Date('2022-01-01'),
-                        createdBy: 'admin',
-                        updatedBy: 'admin',
-                        deleted: false
-                    },
+                    title: 'The Lord of the Rings',
+                    author: 'J.R.R. Tolkien',
+                    publisher: 'Bloomsbury Publishing',
+                    price: 12,
+                    books: [],
+                    availableInventory: null,
+                    totalInventory: null,
+                    lateFeePerDay: 0.5,
                     createdAt: new Date('2022-01-01'),
                     updatedAt: new Date('2022-01-01'),
                     createdBy: 'admin',
                     updatedBy: 'admin',
-                    deleted: false,
+                    deleted: false
+
                 },
                 {
+
                     id: 2,
-                    status: 'borrowed',
-                    comment: null,
-                    bookInformation: {
-                        id: 2,
-                        title: 'Harry Potter and the Philosopher\'s Stone',
-                        author: 'J.K. Rowling',
-                        publisher: 'Bloomsbury Publishing',
-                        price: 12,
-                        books: [],
-                        availableInventory: null,
-                        totalInventory: null,
-                        lateFeePerDay: 0.5,
-                        createdAt: new Date('2022-01-01'),
-                        updatedAt: new Date('2022-01-01'),
-                        createdBy: 'admin',
-                        updatedBy: 'admin',
-                        deleted: false
-                    },
+                    title: 'Harry Potter and the Philosopher\'s Stone',
+                    author: 'J.K. Rowling',
+                    publisher: 'Bloomsbury Publishing',
+                    price: 12,
+                    books: [],
+                    availableInventory: null,
+                    totalInventory: null,
+                    lateFeePerDay: 0.5,
                     createdAt: new Date('2022-01-01'),
                     updatedAt: new Date('2022-01-01'),
                     createdBy: 'admin',
                     updatedBy: 'admin',
-                    deleted: false,
+                    deleted: false
+
                 },
             ];
-            const expectedBooks: Book[] = bookEntities.map((bookEntity) => BooksMapper.toModel(bookEntity));
-            jest.spyOn(booksRepository, 'findMany').mockResolvedValue(bookEntities);
+            const expectedBookInformation: BookInformation[] = bookInformationEntities.map((bookInformationEntity) => BookInformationMapper.toModel(bookInformationEntity));
+            jest.spyOn(bookInformationRepository, 'findMany').mockResolvedValue(bookInformationEntities);
 
-            const books = await service.find('', '', 'Bloomsbury Publishing');
+            const bookInformation = await service.find(undefined, undefined, 'Bloomsbury Publishing');
 
-            expect(books).toEqual(expectedBooks);
+            expect(bookInformation).toEqual(expectedBookInformation);
         });
 
         it('should return an empty array when no matching books are found', async () => {
-            jest.spyOn(booksRepository, 'findMany').mockResolvedValue([]);
+            jest.spyOn(bookInformationRepository, 'findMany').mockResolvedValue([]);
 
-            const books = await service.find('Java', 'Joshua Bloch', 'Addison-Wesley');
+            const bookInformation = await service.find('Java', 'Joshua Bloch', 'Addison-Wesley');
 
-            expect(books).toEqual([]);
+            expect(bookInformation).toEqual([]);
         });
     });
 });
