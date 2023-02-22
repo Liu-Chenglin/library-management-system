@@ -200,5 +200,20 @@ describe('BooksService', () => {
             const expectedBook = BooksMapper.toModel(bookEntity);
             expect(result).toEqual(expectedBook);
         });
+
+        it('should throw exception when book does not exist', async () => {
+            const updateBookDto = {
+                status: "lost",
+                comment: "new comment"
+            }
+            const invalidBookId = 1;
+
+            jest.spyOn(booksRepository, "findOneById").mockImplementation(() => Promise.resolve(undefined));
+
+            await expect(service.update(invalidBookId, updateBookDto)).rejects.toThrow(HttpException);
+
+            expect(booksRepository.findOneById).toHaveBeenCalledWith(invalidBookId);
+            expect(booksRepository.save).not.toBeCalled();
+        });
     });
 });
