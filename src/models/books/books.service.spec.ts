@@ -7,6 +7,7 @@ import {CreateBookDto} from "./dto/create-book.dto";
 import {BookEntity} from "./entities/book.entity";
 import {BooksMapper} from "../../utils/mappers/books.mapper";
 import {HttpException} from "@nestjs/common";
+import {Book} from "./book";
 
 describe('BooksService', () => {
     let service: BooksService;
@@ -17,7 +18,8 @@ describe('BooksService', () => {
         create: jest.fn(),
         save: jest.fn(),
         findOneById: jest.fn(),
-        delete: jest.fn()
+        delete: jest.fn(),
+        findMany: jest.fn()
     } as unknown as BooksRepository;
 
     const mockBookInformationRepository = {
@@ -214,6 +216,71 @@ describe('BooksService', () => {
 
             expect(booksRepository.findOneById).toHaveBeenCalledWith(invalidBookId);
             expect(booksRepository.save).not.toBeCalled();
+        });
+    });
+
+    describe('find', () => {
+        it('should return an array of matching books', async () => {
+            const bookEntities: BookEntity[] = [
+                {
+                    id: 1,
+                    status: 'available',
+                    comment: 'A great book',
+                    bookInformation: {
+                        id: 1,
+                        title: 'The Lord of the Rings',
+                        author: 'J.R.R. Tolkien',
+                        publisher: 'Bloomsbury Publishing',
+                        price: 12,
+                        books: [],
+                        availableInventory: null,
+                        totalInventory: null,
+                        lateFeePerDay: 0.5,
+                        createdAt: new Date('2022-01-01'),
+                        updatedAt: new Date('2022-01-01'),
+                        createdBy: 'admin',
+                        updatedBy: 'admin',
+                        deleted: false
+                    },
+                    createdAt: new Date('2022-01-01'),
+                    updatedAt: new Date('2022-01-01'),
+                    createdBy: 'admin',
+                    updatedBy: 'admin',
+                    deleted: false,
+                },
+                {
+                    id: 2,
+                    status: 'borrowed',
+                    comment: null,
+                    bookInformation: {
+                        id: 2,
+                        title: 'Harry Potter and the Philosopher\'s Stone',
+                        author: 'J.K. Rowling',
+                        publisher: 'Bloomsbury Publishing',
+                        price: 12,
+                        books: [],
+                        availableInventory: null,
+                        totalInventory: null,
+                        lateFeePerDay: 0.5,
+                        createdAt: new Date('2022-01-01'),
+                        updatedAt: new Date('2022-01-01'),
+                        createdBy: 'admin',
+                        updatedBy: 'admin',
+                        deleted: false
+                    },
+                    createdAt: new Date('2022-01-01'),
+                    updatedAt: new Date('2022-01-01'),
+                    createdBy: 'admin',
+                    updatedBy: 'admin',
+                    deleted: false,
+                },
+            ];
+            const expectedBooks: Book[] = bookEntities.map((bookEntity) => BooksMapper.toModel(bookEntity));
+            jest.spyOn(booksRepository, 'findMany').mockResolvedValue(bookEntities);
+
+            const books = await service.find('', '', 'Bloomsbury Publishing');
+
+            expect(books).toEqual(expectedBooks);
         });
     });
 });
