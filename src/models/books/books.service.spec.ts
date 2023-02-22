@@ -6,6 +6,7 @@ import {BooksRepository} from "./books.repository";
 import {CreateBookDto} from "./dto/create-book.dto";
 import {BookEntity} from "./entities/book.entity";
 import {BooksMapper} from "../../utils/mappers/books.mapper";
+import {HttpException} from "@nestjs/common";
 
 describe('BooksService', () => {
     let service: BooksService;
@@ -117,7 +118,7 @@ describe('BooksService', () => {
     });
 
     describe('delete', () => {
-        it('should delete book when book exists', function () {
+        it('should delete book when book exists', async () => {
             const bookEntity: BookEntity = {
                 id: 1,
                 status: "test status",
@@ -133,10 +134,19 @@ describe('BooksService', () => {
             jest.spyOn(booksRepository, "findOne").mockImplementation(() => Promise.resolve(bookEntity));
             jest.spyOn(booksRepository, "delete").mockImplementation();
 
-            service.delete(1);
+            await service.delete(1);
 
             expect(booksRepository.findOne).toHaveBeenCalledWith({id: 1});
             expect(booksRepository.delete).toHaveBeenCalledWith(1);
+        });
+
+        it('should throw exception when book does not exist', async () => {
+            jest.spyOn(booksRepository, "findOne").mockImplementation(() => Promise.resolve(undefined));
+            const invalidBookId = 1;
+
+            await expect(service.delete(invalidBookId)).rejects.toThrow(HttpException);
+
+            expect(booksRepository.findOne).toHaveBeenCalledWith({id: invalidBookId});
         });
     });
 });

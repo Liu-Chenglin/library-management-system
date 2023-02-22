@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {Book} from './book';
 import {CreateBookDto} from "./dto/create-book.dto";
 import {BookInformationEntity} from "./entities/book-information.entity";
@@ -29,7 +29,11 @@ export class BooksService {
     }
 
     async delete(bookId: number) {
-        const bookEntity = this.booksRepository.findOne({id: bookId});
+        const bookEntity = await this.booksRepository.findOne({id: bookId});
+
+        if (!bookEntity) {
+            throw new HttpException('Book Not Found', HttpStatus.NOT_FOUND);
+        }
 
         await this.booksRepository.delete(bookId);
     }

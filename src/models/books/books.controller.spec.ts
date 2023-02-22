@@ -3,7 +3,7 @@ import {BooksService} from './books.service';
 import {CreateBookDto} from "./dto/create-book.dto";
 import {Book} from "./book";
 import {Test, TestingModule} from "@nestjs/testing";
-import {HttpStatus, INestApplication} from "@nestjs/common";
+import {HttpException, HttpStatus, INestApplication} from "@nestjs/common";
 import {AppModule} from "../../app.module";
 import * as request from 'supertest';
 
@@ -62,7 +62,7 @@ describe('BooksController', () => {
                 .send(incorrectCreateBookDto)
                 .expect(HttpStatus.BAD_REQUEST);
 
-            expect(response.body.message).toContain('title must be a string');
+            expect(response.body.message.message).toContain('title must be a string');
         });
 
         it('should return Bad Request when given book is missing title', async () => {
@@ -73,19 +73,24 @@ describe('BooksController', () => {
                 .send(invalidCreateBookDto)
                 .expect(HttpStatus.BAD_REQUEST);
 
-            expect(response.body.message).toContain('title should not be empty');
-            expect(response.body.message).toContain('title must be a string');
+            expect(response.body.message.message).toContain('title should not be empty');
+            expect(response.body.message.message).toContain('title must be a string');
         });
     });
 
     describe('deleteBook', () => {
         it('should delete the book when given book exists', async () => {
-            jest.spyOn(booksService, 'delete').mockImplementation(() => {
-            });
+            jest.spyOn(booksService, 'delete').mockImplementation();
 
             await request(app.getHttpServer())
                 .delete('/books/1')
                 .expect(HttpStatus.NO_CONTENT);
+        });
+
+        it('should return NOT FOUND when given book does not exist', async () => {
+            jest.spyOn(booksService, 'delete').mockRejectedValue(new HttpException('Book Not Found', HttpStatus.NOT_FOUND));
+
+            await expect(booksController.deleteBook(1)).rejects.toThrow(HttpException);
         });
     });
 });

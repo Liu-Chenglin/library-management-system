@@ -9,7 +9,7 @@ export class BooksRepository {
     constructor(@InjectRepository(BookEntity) private readonly repository: Repository<BookEntity>) {
     }
 
-    async findOne(condition: {}): Promise<BookEntity> {
+    async findOne(condition: {}): Promise<BookEntity | undefined> {
         return this.repository.findOne({
             where: {...condition}
         });
