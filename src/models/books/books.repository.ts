@@ -9,9 +9,9 @@ export class BooksRepository {
     constructor(@InjectRepository(BookEntity) private readonly repository: Repository<BookEntity>) {
     }
 
-    async findOne(condition: {}): Promise<BookEntity | undefined> {
+    async findOneById(id: number): Promise<BookEntity | undefined> {
         return this.repository.findOne({
-            where: {...condition}
+            where: {id}
         });
     }
 

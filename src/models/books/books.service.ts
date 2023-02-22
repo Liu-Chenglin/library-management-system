@@ -30,7 +30,7 @@ export class BooksService {
     }
 
     async delete(bookId: number) {
-        const bookEntity = await this.booksRepository.findOne({id: bookId});
+        const bookEntity = await this.booksRepository.findOneById(bookId);
 
         if (!bookEntity) {
             throw new HttpException('Book Not Found', HttpStatus.NOT_FOUND);
@@ -39,7 +39,18 @@ export class BooksService {
         await this.booksRepository.delete(bookId);
     }
 
-    update(updateBookDto: UpdateBookDto) {
+    async update(bookId: number, updateBookDto: UpdateBookDto): Promise<Book> {
+        const bookEntity = await this.booksRepository.findOneById(bookId);
+
+        if (!bookEntity) {
+            throw new HttpException('Book Not Found', HttpStatus.NOT_FOUND);
+        }
+
+        if (updateBookDto.comment !== null) bookEntity.comment = updateBookDto.comment;
+        if (updateBookDto.status !== null) bookEntity.status = updateBookDto.status;
+
+        const updatedBookEntity = await this.booksRepository.save(bookEntity);
+        return BooksMapper.toModel(updatedBookEntity);
     }
 
     private async findOrSaveBookInformationEntity(createBookDto: CreateBookDto): Promise<BookInformationEntity> {

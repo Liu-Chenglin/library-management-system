@@ -35,7 +35,7 @@ export class BooksController {
     }
 
     @Patch(':id')
-    updateBook(@Body() updateBookDto: UpdateBookDto) {
-        this.booksService.update(updateBookDto);
+    async updateBook(@Param('id') bookId: number, @Body() updateBookDto: UpdateBookDto) {
+        return await this.booksService.update(bookId, updateBookDto);
     }
 }

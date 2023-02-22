@@ -16,7 +16,7 @@ describe('BooksService', () => {
     const mockBookRepository = {
         create: jest.fn(),
         save: jest.fn(),
-        findOne: jest.fn(),
+        findOneById: jest.fn(),
         delete: jest.fn()
     } as unknown as BooksRepository;
 
@@ -119,8 +119,9 @@ describe('BooksService', () => {
 
     describe('delete', () => {
         it('should delete book when book exists', async () => {
+            const bookId = 1;
             const bookEntity: BookEntity = {
-                id: 1,
+                id: bookId,
                 status: "test status",
                 comment: "test comment",
                 bookInformation: null,
@@ -131,22 +132,73 @@ describe('BooksService', () => {
                 deleted: false,
             };
 
-            jest.spyOn(booksRepository, "findOne").mockImplementation(() => Promise.resolve(bookEntity));
+            jest.spyOn(booksRepository, "findOneById").mockImplementation(() => Promise.resolve(bookEntity));
             jest.spyOn(booksRepository, "delete").mockImplementation();
 
-            await service.delete(1);
+            await service.delete(bookId);
 
-            expect(booksRepository.findOne).toHaveBeenCalledWith({id: 1});
-            expect(booksRepository.delete).toHaveBeenCalledWith(1);
+            expect(booksRepository.findOneById).toHaveBeenCalledWith(bookId);
+            expect(booksRepository.delete).toHaveBeenCalledWith(bookId);
         });
 
         it('should throw exception when book does not exist', async () => {
-            jest.spyOn(booksRepository, "findOne").mockImplementation(() => Promise.resolve(undefined));
+            jest.spyOn(booksRepository, "findOneById").mockImplementation(() => Promise.resolve(undefined));
             const invalidBookId = 1;
 
             await expect(service.delete(invalidBookId)).rejects.toThrow(HttpException);
 
-            expect(booksRepository.findOne).toHaveBeenCalledWith({id: invalidBookId});
+            expect(booksRepository.findOneById).toHaveBeenCalledWith(invalidBookId);
+        });
+    });
+
+    describe('update', () => {
+        const bookEntity: BookEntity = {
+            id: 1,
+            status: "available",
+            comment: "original",
+            bookInformation: new BookInformationEntity(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            createdBy: "",
+            updatedBy: "",
+            deleted: false,
+        };
+
+        it('should update book when given one field to update', async () => {
+            const updateBookDto = {
+                status: "lost",
+                comment: null
+            }
+
+            jest.spyOn(booksRepository, 'findOneById').mockImplementation(() => Promise.resolve(bookEntity));
+
+            // change original book to updated book then return
+            bookEntity.status = updateBookDto.status;
+            jest.spyOn(booksRepository, 'save').mockImplementation(() => Promise.resolve(bookEntity));
+
+            const result = await service.update(1, updateBookDto);
+
+            const expectedBook = BooksMapper.toModel(bookEntity);
+            expect(result).toEqual(expectedBook);
+        });
+
+        it('should update book when given two fields to update', async () => {
+            const updateBookDto = {
+                status: "lost",
+                comment: "new comment"
+            }
+
+            jest.spyOn(booksRepository, 'findOneById').mockImplementation(() => Promise.resolve(bookEntity));
+
+            // change original book to updated book then return
+            bookEntity.status = updateBookDto.status;
+            bookEntity.comment = updateBookDto.comment;
+            jest.spyOn(booksRepository, 'save').mockImplementation(() => Promise.resolve(bookEntity));
+
+            const result = await service.update(1, updateBookDto);
+
+            const expectedBook = BooksMapper.toModel(bookEntity);
+            expect(result).toEqual(expectedBook);
         });
     });
 });
