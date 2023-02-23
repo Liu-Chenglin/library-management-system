@@ -38,6 +38,7 @@ export class BooksController {
     }
 
     @Patch(':id')
+    @UsePipes(new ValidationPipe())
     async updateBook(@Param('id') bookId: number, @Body() updateBookDto: UpdateBookDto) {
         return await this.booksService.update(bookId, updateBookDto);
     }
