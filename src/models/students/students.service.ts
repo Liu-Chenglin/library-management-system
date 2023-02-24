@@ -43,4 +43,8 @@ export class StudentsService {
 
         return studentTypeEntity;
     }
+
+    async delete(studentId: number) {
+
+    }
 }

@@ -4,7 +4,7 @@ import {StudentsService} from './students.service';
 import {CreateStudentDto} from "./dto/create-student.dto";
 import {Student} from "./student";
 import * as request from "supertest";
-import {HttpStatus, INestApplication} from "@nestjs/common";
+import {HttpException, HttpStatus, INestApplication} from "@nestjs/common";
 import {AppModule} from "../../app.module";
 
 describe('StudentsController', () => {
@@ -14,6 +14,7 @@ describe('StudentsController', () => {
 
     const mockStudentsService = {
         create: jest.fn(),
+        delete: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -34,7 +35,7 @@ describe('StudentsController', () => {
         studentsService = module.get<StudentsService>(StudentsService);
     });
 
-    describe('create', () => {
+    describe('createStudent', () => {
         const createStudentDto: CreateStudentDto = {
             name: 'John Doe',
             grade: 1,
@@ -77,8 +78,24 @@ describe('StudentsController', () => {
                 .post('/students')
                 .send(invalidCreateStudentDto)
                 .expect(HttpStatus.BAD_REQUEST);
-            
+
             expect(response.body.message.message).toContain('email must be an email');
+        });
+    });
+
+    describe('deleteStudent', () => {
+        it('should delete the student when given student exists', async () => {
+            jest.spyOn(studentsService, 'delete').mockImplementation();
+
+            await request(app.getHttpServer())
+                .delete('/students/1')
+                .expect(HttpStatus.NO_CONTENT);
+        });
+
+        it('should return NOT FOUND when given student does not exist', async () => {
+            jest.spyOn(studentsService, 'delete').mockRejectedValue(new HttpException('Student Not Found', HttpStatus.NOT_FOUND));
+
+            await expect(studentsController.deleteStudent(1)).rejects.toThrow(HttpException);
         });
     });
 });
