@@ -78,9 +78,7 @@ describe('BooksService', () => {
                 availableInventory: null,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                createdBy: "",
-                updatedBy: "",
-                deleted: false,
+                deletedAt: null,
             };
             const bookEntity: BookEntity = {
                 id: 1,
@@ -89,9 +87,7 @@ describe('BooksService', () => {
                 bookInformation: bookInformationEntity,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                createdBy: "",
-                updatedBy: "",
-                deleted: false,
+                deletedAt: null,
             };
 
             jest.spyOn(booksRepository, 'create').mockImplementation(() => bookEntity);
@@ -130,9 +126,7 @@ describe('BooksService', () => {
                 bookInformation: null,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                createdBy: "",
-                updatedBy: "",
-                deleted: false,
+                deletedAt: null,
             };
 
             jest.spyOn(booksRepository, "findOneById").mockImplementation(() => Promise.resolve(bookEntity));
@@ -162,9 +156,7 @@ describe('BooksService', () => {
             bookInformation: new BookInformationEntity(),
             createdAt: new Date(),
             updatedAt: new Date(),
-            createdBy: "",
-            updatedBy: "",
-            deleted: false,
+            deletedAt: null,
         };
 
         it('should update book when given one field to update', async () => {
@@ -236,10 +228,7 @@ describe('BooksService', () => {
                     lateFeePerDay: 0.5,
                     createdAt: new Date('2022-01-01'),
                     updatedAt: new Date('2022-01-01'),
-                    createdBy: 'admin',
-                    updatedBy: 'admin',
-                    deleted: false
-
+                    deletedAt: null
                 },
                 {
 
@@ -254,10 +243,7 @@ describe('BooksService', () => {
                     lateFeePerDay: 0.5,
                     createdAt: new Date('2022-01-01'),
                     updatedAt: new Date('2022-01-01'),
-                    createdBy: 'admin',
-                    updatedBy: 'admin',
-                    deleted: false
-
+                    deletedAt: null
                 },
             ];
             const expectedBookInformation: BookInformation[] = bookInformationEntities.map((bookInformationEntity) => BookInformationMapper.toModel(bookInformationEntity));

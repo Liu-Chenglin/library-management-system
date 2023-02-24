@@ -21,8 +21,6 @@ export class BooksService {
         const bookEntity = this.booksRepository.create({
             status: createBookDto.status,
             comment: createBookDto.comment,
-            createdAt: new Date(),
-            updatedAt: new Date(),
             bookInformation: bookInformationEntity
         });
         const savedBookEntity = await this.booksRepository.save(bookEntity);

@@ -99,11 +99,15 @@ describe('BooksController', () => {
 
     describe('updateBook', () => {
         it('should update status of a book', async () => {
+            const updateBookDto = {
+                status: "lost",
+                comment: null
+            }
             jest.spyOn(booksService, 'update').mockImplementation();
 
             await request(app.getHttpServer())
                 .patch('/books/1')
-                .send({status: 'lost'})
+                .send(updateBookDto)
                 .expect(HttpStatus.OK);
         });
 
