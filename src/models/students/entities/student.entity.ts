@@ -20,7 +20,7 @@ export class StudentEntity extends BaseEntity {
     availableQuota: number;
 
     @Column()
-    phone: number;
+    phone: string;
 
     @Column()
     email: string;

@@ -6,7 +6,7 @@ import {StudentEntity} from "./student.entity";
 export class StudentTypeEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
-
+    
     @Column()
     type: string;
 

@@ -7,4 +7,12 @@ import {StudentEntity} from "./entities/student.entity";
 export class StudentsRepository {
     constructor(@InjectRepository(StudentEntity) private readonly repository: Repository<StudentEntity>) {
     }
+
+    create(studentEntity: StudentEntity): StudentEntity {
+        return this.repository.create(studentEntity);
+    }
+
+    async save(studentEntity: StudentEntity): Promise<StudentEntity> {
+        return await this.repository.save(studentEntity);
+    }
 }

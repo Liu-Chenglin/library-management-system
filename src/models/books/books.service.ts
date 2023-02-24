@@ -4,8 +4,8 @@ import {CreateBookDto} from "./dto/create-book.dto";
 import {BookInformationEntity} from "./entities/book-information.entity";
 import {BooksRepository} from "./books.repository";
 import {BookInformationRepository} from "./book-information.repository";
-import {BooksMapper} from "../../utils/mappers/books.mapper";
-import {BookInformationMapper} from "../../utils/mappers/book-information.mapper";
+import {BooksMapper} from "../../utils/mappers/books/books.mapper";
+import {BookInformationMapper} from "../../utils/mappers/books/book-information.mapper";
 import {UpdateBookDto} from "./dto/update-book.dto";
 import {BookInformation} from "./book-information";
 

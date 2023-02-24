@@ -5,10 +5,10 @@ import {BookInformationRepository} from "./book-information.repository";
 import {BooksRepository} from "./books.repository";
 import {CreateBookDto} from "./dto/create-book.dto";
 import {BookEntity} from "./entities/book.entity";
-import {BooksMapper} from "../../utils/mappers/books.mapper";
+import {BooksMapper} from "../../utils/mappers/books/books.mapper";
 import {HttpException} from "@nestjs/common";
 import {BookInformation} from "./book-information";
-import {BookInformationMapper} from "../../utils/mappers/book-information.mapper";
+import {BookInformationMapper} from "../../utils/mappers/books/book-information.mapper";
 
 describe('BooksService', () => {
     let service: BooksService;

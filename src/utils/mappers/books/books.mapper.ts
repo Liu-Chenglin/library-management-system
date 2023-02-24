@@ -1,5 +1,5 @@
-import {Book} from "../../models/books/book";
-import {BookEntity} from "../../models/books/entities/book.entity";
+import {Book} from "../../../models/books/book";
+import {BookEntity} from "../../../models/books/entities/book.entity";
 
 export class BooksMapper {
     static toModel(bookEntity: BookEntity): Book {

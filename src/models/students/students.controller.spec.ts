@@ -3,7 +3,6 @@ import {StudentsController} from './students.controller';
 import {StudentsService} from './students.service';
 import {CreateStudentDto} from "./dto/create-student.dto";
 import {Student} from "./student";
-import {StudentType} from "./student-type";
 
 describe('StudentsController', () => {
     let studentsController: StudentsController;
@@ -33,13 +32,15 @@ describe('StudentsController', () => {
             name: 'John Doe',
             grade: 1,
             type: 'Undergraduate',
-            phone: 12345678901,
+            phone: '12345678901',
             email: 'johndoe@example.com',
         }
-        
-        const createdStudent = new Student(1, createStudentDto.grade,
-            new StudentType(), 5, createStudentDto.phone,
-            createStudentDto.email);
+
+        const createdStudent = {
+            id: 1,
+            availableQuota: 5,
+            ...createStudentDto
+        } as unknown as Student;
 
         it('should create student when given student is valid', async () => {
             jest.spyOn(studentsService, 'create').mockResolvedValue(createdStudent);
