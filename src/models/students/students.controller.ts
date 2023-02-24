@@ -1,4 +1,15 @@
-import {Body, Controller, Delete, HttpCode, Param, Post, UseFilters, UsePipes, ValidationPipe} from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Delete,
+    HttpCode,
+    Param,
+    Patch,
+    Post,
+    UseFilters,
+    UsePipes,
+    ValidationPipe
+} from "@nestjs/common";
 import {HttpExceptionFilter} from "../../common/exceptions/handlers/http-exception.filter";
 import {StudentsService} from "./students.service";
 import {CreateStudentDto} from "./dto/create-student.dto";
@@ -21,5 +32,11 @@ export class StudentsController {
     @HttpCode(204)
     async deleteStudent(@Param('id') studentId: number) {
         await this.studentsService.delete(studentId);
+    }
+
+    @Patch(':id')
+    @UsePipes(new ValidationPipe())
+    async updateStudent(@Param('id') studentId: number, @Body() updateStudentDto: CreateStudentDto) {
+        return await this.studentsService.update(studentId, updateStudentDto);
     }
 }

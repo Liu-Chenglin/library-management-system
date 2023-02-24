@@ -15,6 +15,7 @@ describe('StudentsController', () => {
     const mockStudentsService = {
         create: jest.fn(),
         delete: jest.fn(),
+        update: jest.fn()
     };
 
     beforeEach(async () => {
@@ -98,4 +99,26 @@ describe('StudentsController', () => {
             await expect(studentsController.deleteStudent(1)).rejects.toThrow(HttpException);
         });
     });
+
+    describe('updateStudent', () => {
+        it('should update grade of a student', async () => {
+            const updateStudentDto = {
+                name: 'John Doe',
+                grade: 2,
+                type: 'Undergraduate',
+                phone: '13912345678',
+                email: 'johndoe@example.com',
+            }
+            const updatedStudent = {
+                id: 1,
+                availableQuota: 5,
+                ...updateStudentDto
+            } as unknown as Student;
+            jest.spyOn(studentsService, 'update').mockResolvedValue(updatedStudent);
+
+            const student = await studentsController.updateStudent(1, updateStudentDto);
+
+            expect(student).toEqual(updatedStudent);
+        });
+    })
 });

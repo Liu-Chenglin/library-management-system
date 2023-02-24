@@ -6,6 +6,8 @@ import {StudentTypeEntity} from "./entities/student-type.entity";
 import {CreateStudentDto} from "./dto/create-student.dto";
 import {Student} from "./student";
 import {HttpException} from "@nestjs/common";
+import {StudentsMapper} from "../../utils/mappers/students/students.mapper";
+import {StudentTypeMapper} from "../../utils/mappers/students/student-type.mapper";
 
 describe('StudentsService', () => {
     let studentsService: StudentsService;
@@ -42,55 +44,56 @@ describe('StudentsService', () => {
         studentTypeRepository = module.get<StudentTypeRepository>(StudentTypeRepository);
     });
 
-    describe('create', () => {
-        const createStudentDto: CreateStudentDto = {
-            name: 'Test Student',
-            grade: 1,
-            type: 'Postgraduate',
-            phone: '13912345678',
-            email: 'test.student@example.com',
-        };
+    const createStudentDto: CreateStudentDto = {
+        name: 'Test Student',
+        grade: 1,
+        type: 'Postgraduate',
+        phone: '13912345678',
+        email: 'test.student@example.com',
+    };
 
-        const studentTypeEntity = {
+    const studentTypeEntity = {
+        id: 2,
+        type: 'Postgraduate',
+        quota: 10,
+        maxLoanPeriod: 21,
+        students: [],
+        createdAt: new Date('2022-01-01'),
+        updatedAt: new Date('2022-01-01'),
+    } as unknown as StudentTypeEntity;
+
+    const createdStudentEntity = {
+        id: 1,
+        name: 'Test Student',
+        grade: 1,
+        type: studentTypeEntity,
+        availableQuota: 10,
+        phone: '13912345678',
+        email: 'test.student@example.com',
+    };
+
+    const savedStudentEntity = {
+        ...createdStudentEntity,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    };
+
+    const expectedStudent: Student = {
+        id: 1,
+        name: 'Test Student',
+        grade: 1,
+        type: {
             id: 2,
             type: 'Postgraduate',
             quota: 10,
-            maxLoanPeriod: 21,
-            students: [],
-            createdAt: new Date('2022-01-01'),
-            updatedAt: new Date('2022-01-01'),
-        } as unknown as StudentTypeEntity;
+            maxLoanPeriod: 21
+        },
+        availableQuota: 10,
+        phone: '13912345678',
+        email: 'test.student@example.com',
+    };
 
-        const createdStudentEntity = {
-            id: 1,
-            name: 'Test Student',
-            grade: 1,
-            type: studentTypeEntity,
-            availableQuota: 10,
-            phone: '13912345678',
-            email: 'test.student@example.com',
-        };
-
-        const savedStudentEntity = {
-            ...createdStudentEntity,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
-
-        const expectedStudent: Student = {
-            id: 1,
-            name: 'Test Student',
-            grade: 1,
-            type: {
-                id: 2,
-                type: 'Postgraduate',
-                quota: 10,
-                maxLoanPeriod: 21
-            },
-            availableQuota: 10,
-            phone: '13912345678',
-            email: 'test.student@example.com',
-        };
+    describe('create', () => {
 
         it('should create a new student with valid data', async () => {
             jest.spyOn(studentTypeRepository, 'findByType').mockResolvedValue(studentTypeEntity);
@@ -140,6 +143,31 @@ describe('StudentsService', () => {
             await expect(studentsService.delete(invalidStudentId)).rejects.toThrow(HttpException);
 
             expect(studentsRepository.findOneById).toHaveBeenCalledWith(invalidStudentId);
+        });
+    });
+
+    describe('update', () => {
+
+        it('should update student when given one field to update', async () => {
+            const updateStudentDto: CreateStudentDto = {
+                name: 'Test Student',
+                grade: 12,
+                type: 'Postgraduate',
+                phone: '13912345678',
+                email: 'test.student@example.com',
+            };
+
+            jest.spyOn(studentsRepository, 'findOneById').mockImplementation(() => Promise.resolve(savedStudentEntity));
+            jest.spyOn(studentTypeRepository, 'findByType').mockResolvedValue(studentTypeEntity);
+            // change original student to updated student then return
+            savedStudentEntity.grade = 12;
+            jest.spyOn(studentsRepository, 'save').mockImplementation(() => Promise.resolve(savedStudentEntity));
+
+            const result = await studentsService.update(1, updateStudentDto);
+
+            const expectedStudent = StudentsMapper.toModel(savedStudentEntity);
+            expectedStudent.type = StudentTypeMapper.toModel(studentTypeEntity);
+            expect(result).toEqual(expectedStudent);
         });
     });
 });

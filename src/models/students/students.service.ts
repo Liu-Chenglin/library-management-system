@@ -17,7 +17,7 @@ export class StudentsService {
     }
 
     async create(createStudentDto: CreateStudentDto): Promise<Student> {
-        const studentTypeEntity = await this.findStudentTypeOrThrow(createStudentDto);
+        const studentTypeEntity = await this.findStudentTypeOrThrow(createStudentDto.type);
 
         const createdStudentEntity = this.createStudentEntity(createStudentDto, studentTypeEntity);
         const savedStudentEntity = await this.studentsRepository.save(createdStudentEntity);
@@ -27,26 +27,42 @@ export class StudentsService {
         return student;
     }
 
-    private createStudentEntity(createStudentDto: CreateStudentDto, studentTypeEntity: StudentTypeEntity) {
-        const createdStudentEntity = plainToClass(StudentEntity, createStudentDto);
-        createdStudentEntity.availableQuota = studentTypeEntity.quota;
-        createdStudentEntity.type = studentTypeEntity;
-        return createdStudentEntity;
+    async delete(studentId: number) {
+        await this.findOneByIdOrThrow(studentId);
+        await this.studentsRepository.delete(studentId);
     }
 
-    private async findStudentTypeOrThrow(createStudentDto: CreateStudentDto) {
-        const studentTypeEntity = await this.studentTypeRepository.findByType(createStudentDto.type);
+    async update(studentId: number, updateStudentDto: CreateStudentDto) {
+        const studentEntity = await this.findOneByIdOrThrow(studentId);
+        const studentTypeEntity = await this.findStudentTypeOrThrow(updateStudentDto.type);
+
+        studentEntity.name = updateStudentDto.name;
+        studentEntity.grade = updateStudentDto.grade;
+        studentEntity.type = studentTypeEntity;
+        studentEntity.email = updateStudentDto.email;
+        studentEntity.phone = updateStudentDto.phone;
+        const savedStudentEntity = await this.studentsRepository.save(studentEntity);
+
+        const student = StudentsMapper.toModel(savedStudentEntity);
+        student.type = StudentTypeMapper.toModel(studentTypeEntity);
+        return student;
+    }
+
+    private async findStudentTypeOrThrow(type: string) {
+        const studentTypeEntity = await this.studentTypeRepository.findByType(type);
 
         if (!studentTypeEntity) {
-            throw new HttpException("Student Type Not Found: " + createStudentDto.type, HttpStatus.NOT_FOUND);
+            throw new HttpException("Student Type Not Found: " + type, HttpStatus.NOT_FOUND);
         }
 
         return studentTypeEntity;
     }
 
-    async delete(studentId: number) {
-        await this.findOneByIdOrThrow(studentId);
-        await this.studentsRepository.delete(studentId);
+    private createStudentEntity(createStudentDto: CreateStudentDto, studentTypeEntity: StudentTypeEntity) {
+        const createdStudentEntity = plainToClass(StudentEntity, createStudentDto);
+        createdStudentEntity.availableQuota = studentTypeEntity.quota;
+        createdStudentEntity.type = studentTypeEntity;
+        return createdStudentEntity;
     }
 
     private async findOneByIdOrThrow(studentId: number) {
