@@ -30,7 +30,6 @@ export class BooksService {
 
     async delete(bookId: number) {
         await this.findOneByIdOrThrow(bookId);
-
         await this.booksRepository.delete(bookId);
     }
 

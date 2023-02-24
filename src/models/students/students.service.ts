@@ -45,6 +45,15 @@ export class StudentsService {
     }
 
     async delete(studentId: number) {
+        await this.findOneByIdOrThrow(studentId);
+        await this.studentsRepository.delete(studentId);
+    }
 
+    private async findOneByIdOrThrow(studentId: number) {
+        const studentEntity = await this.studentsRepository.findOneById(studentId);
+        if (!studentEntity) {
+            throw new HttpException('Student Not Found', HttpStatus.NOT_FOUND);
+        }
+        return studentEntity;
     }
 }

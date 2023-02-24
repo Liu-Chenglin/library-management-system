@@ -15,4 +15,12 @@ export class StudentsRepository {
     async save(studentEntity: StudentEntity): Promise<StudentEntity> {
         return await this.repository.save(studentEntity);
     }
+
+    async findOneById(studentId: number) {
+        return await this.repository.findOneBy({id: studentId});
+    }
+
+    async delete(studentId: number) {
+        await this.repository.softDelete(studentId);
+    }
 }

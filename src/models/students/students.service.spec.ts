@@ -14,6 +14,8 @@ describe('StudentsService', () => {
 
     const mockStudentsRepository = {
         save: jest.fn(),
+        findOneById: jest.fn(),
+        delete: jest.fn(),
     } as unknown as StudentsRepository;
 
     const mockStudentTypeRepository = {
@@ -103,6 +105,41 @@ describe('StudentsService', () => {
             jest.spyOn(studentTypeRepository, 'findByType').mockResolvedValue(undefined);
 
             await expect(studentsService.create(createStudentDto)).rejects.toThrow(HttpException);
+        });
+    });
+
+    describe('delete', () => {
+        const studentEntity = {
+            id: 1,
+            name: 'Test Student',
+            grade: 1,
+            type: null,
+            availableQuota: 10,
+            phone: '13912345678',
+            email: 'test.student@example.com',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        it('should delete student when student exists', async () => {
+            const studentId = 1;
+
+            jest.spyOn(studentsRepository, "findOneById").mockImplementation(() => Promise.resolve(studentEntity));
+            jest.spyOn(studentsRepository, "delete").mockImplementation();
+
+            await studentsService.delete(studentId);
+
+            expect(studentsRepository.findOneById).toHaveBeenCalledWith(studentId);
+            expect(studentsRepository.delete).toHaveBeenCalledWith(studentId);
+        });
+
+        it('should throw exception when student does not exist', async () => {
+            jest.spyOn(studentsRepository, "findOneById").mockImplementation(() => Promise.resolve(undefined));
+            const invalidStudentId = 1;
+
+            await expect(studentsService.delete(invalidStudentId)).rejects.toThrow(HttpException);
+
+            expect(studentsRepository.findOneById).toHaveBeenCalledWith(invalidStudentId);
         });
     });
 });
