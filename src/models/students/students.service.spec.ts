@@ -5,7 +5,7 @@ import {StudentsRepository} from './students.repository';
 import {StudentTypeEntity} from "./entities/student-type.entity";
 import {CreateStudentDto} from "./dto/create-student.dto";
 import {Student} from "./student";
-import {HttpException} from "@nestjs/common";
+import {HttpException, HttpStatus} from "@nestjs/common";
 import {StudentsMapper} from "../../utils/mappers/students/students.mapper";
 import {StudentTypeMapper} from "../../utils/mappers/students/student-type.mapper";
 
@@ -43,6 +43,10 @@ describe('StudentsService', () => {
         studentsRepository = module.get<StudentsRepository>(StudentsRepository);
         studentTypeRepository = module.get<StudentTypeRepository>(StudentTypeRepository);
     });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    })
 
     const createStudentDto: CreateStudentDto = {
         name: 'Test Student',
@@ -168,6 +172,24 @@ describe('StudentsService', () => {
             const expectedStudent = StudentsMapper.toModel(savedStudentEntity);
             expectedStudent.type = StudentTypeMapper.toModel(studentTypeEntity);
             expect(result).toEqual(expectedStudent);
+        });
+
+        it('should throw exception when student does not exist', async () => {
+            const updateStudentDto: CreateStudentDto = {
+                name: 'Test Student',
+                grade: 12,
+                type: 'Postgraduate',
+                phone: '13912345678',
+                email: 'test.student@example.com',
+            };
+            const invalidStudentId = 1;
+
+            jest.spyOn(studentsRepository, "findOneById").mockImplementation(() => Promise.resolve(undefined));
+            jest.spyOn(studentsRepository, "save").mockImplementation(() => Promise.resolve(undefined));
+            
+            await expect(studentsService.update(invalidStudentId, updateStudentDto)).rejects.toThrow(new HttpException("Student Not Found", HttpStatus.NOT_FOUND));
+            expect(studentsRepository.findOneById).toHaveBeenCalledWith(invalidStudentId);
+            expect(studentsRepository.save).not.toBeCalled();
         });
     });
 });
