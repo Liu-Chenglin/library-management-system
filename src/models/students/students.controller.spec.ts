@@ -15,7 +15,8 @@ describe('StudentsController', () => {
     const mockStudentsService = {
         create: jest.fn(),
         delete: jest.fn(),
-        update: jest.fn()
+        update: jest.fn(),
+        find: jest.fn()
     };
 
     beforeEach(async () => {
@@ -120,5 +121,24 @@ describe('StudentsController', () => {
 
             expect(student).toEqual(updatedStudent);
         });
-    })
+    });
+
+    describe('getStudent', () => {
+        it('should return student when student exists', async function () {
+            const student: Student = {
+                id: 1,
+                name: "Charlie",
+                grade: 1,
+                type: null,
+                availableQuota: 10,
+                phone: '13912345678',
+                email: 'johndoe@example.com',
+            }
+            jest.spyOn(studentsService, 'find').mockResolvedValue(student);
+
+            const result = await studentsController.getStudent(1);
+
+            expect(result).toEqual(student);
+        });
+    });
 });

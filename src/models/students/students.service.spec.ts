@@ -172,6 +172,7 @@ describe('StudentsService', () => {
             const expectedStudent = StudentsMapper.toModel(savedStudentEntity);
             expectedStudent.type = StudentTypeMapper.toModel(studentTypeEntity);
             expect(result).toEqual(expectedStudent);
+            savedStudentEntity.grade = 1;
         });
 
         it('should throw exception when student does not exist', async () => {
@@ -186,10 +187,27 @@ describe('StudentsService', () => {
 
             jest.spyOn(studentsRepository, "findOneById").mockImplementation(() => Promise.resolve(undefined));
             jest.spyOn(studentsRepository, "save").mockImplementation(() => Promise.resolve(undefined));
-            
+
             await expect(studentsService.update(invalidStudentId, updateStudentDto)).rejects.toThrow(new HttpException("Student Not Found", HttpStatus.NOT_FOUND));
             expect(studentsRepository.findOneById).toHaveBeenCalledWith(invalidStudentId);
             expect(studentsRepository.save).not.toBeCalled();
+        });
+    });
+
+    describe('find', () => {
+        it('should return student when student exist', async function () {
+            jest.spyOn(studentsRepository, 'findOneById').mockResolvedValue(savedStudentEntity);
+
+            const result = await studentsService.find(1);
+
+            expect(result).toEqual(expectedStudent);
+        });
+
+        it('should throw exception when student does not exist', async () => {
+            jest.spyOn(studentsRepository, "findOneById").mockImplementation(() => Promise.resolve(undefined));
+            const invalidStudentId = 1;
+
+            await expect(studentsService.find(invalidStudentId)).rejects.toThrow(new HttpException("Student Not Found", HttpStatus.NOT_FOUND));
         });
     });
 });

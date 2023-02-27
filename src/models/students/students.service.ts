@@ -72,4 +72,12 @@ export class StudentsService {
         }
         return studentEntity;
     }
+
+    async find(studentId: number): Promise<Student> {
+        const studentEntity = await this.findOneByIdOrThrow(studentId);
+        const student = StudentsMapper.toModel(studentEntity);
+        student.type = StudentTypeMapper.toModel(studentEntity.type);
+        
+        return student;
+    }
 }

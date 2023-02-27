@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Delete,
+    Get,
     HttpCode,
     Param,
     Patch,
@@ -38,5 +39,10 @@ export class StudentsController {
     @UsePipes(new ValidationPipe())
     async updateStudent(@Param('id') studentId: number, @Body() updateStudentDto: CreateStudentDto) {
         return await this.studentsService.update(studentId, updateStudentDto);
+    }
+
+    @Get(':id')
+    async getStudent(@Param('id') studentId: number) {
+        return await this.studentsService.find(studentId);
     }
 }

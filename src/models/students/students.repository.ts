@@ -17,7 +17,7 @@ export class StudentsRepository {
     }
 
     async findOneById(studentId: number) {
-        return await this.repository.findOneBy({id: studentId});
+        return await this.repository.findOne({where: {id: studentId}, relations: ['type']});
     }
 
     async delete(studentId: number) {
