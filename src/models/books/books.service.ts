@@ -8,6 +8,7 @@ import {BooksMapper} from "../../utils/mappers/books/books.mapper";
 import {BookInformationMapper} from "../../utils/mappers/books/book-information.mapper";
 import {UpdateBookDto} from "./dto/update-book.dto";
 import {BookInformation} from "./book-information";
+import {BookEntity} from "./entities/book.entity";
 
 @Injectable()
 export class BooksService {
@@ -49,7 +50,7 @@ export class BooksService {
         return bookInformationEntities.map((bookInformationEntity) => BookInformationMapper.toModel(bookInformationEntity));
     }
 
-    private async findOneByIdOrThrow(bookId: number) {
+    async findOneByIdOrThrow(bookId: number) {
         const bookEntity = await this.booksRepository.findOneById(bookId);
 
         if (!bookEntity) {
@@ -69,5 +70,11 @@ export class BooksService {
         }
 
         return bookInformationEntity;
+    }
+
+    async save(bookEntity: BookEntity): Promise<Book> {
+        const savedBookEntity = await this.booksRepository.save(bookEntity);
+
+        return BooksMapper.toModel(savedBookEntity);
     }
 }

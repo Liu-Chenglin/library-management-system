@@ -11,6 +11,7 @@ import {BookInformationRepository} from "./book-information.repository";
     imports: [TypeOrmModule.forFeature([BookEntity, BookInformationEntity])],
     controllers: [BooksController],
     providers: [BooksService, BooksRepository, BookInformationRepository],
+    exports: [BooksService]
 })
 export class BooksModule {
 }

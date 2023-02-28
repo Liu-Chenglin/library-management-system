@@ -65,7 +65,7 @@ export class StudentsService {
         return createdStudentEntity;
     }
 
-    private async findOneByIdOrThrow(studentId: number) {
+    async findOneByIdOrThrow(studentId: number) {
         const studentEntity = await this.studentsRepository.findOneById(studentId);
         if (!studentEntity) {
             throw new HttpException('Student Not Found', HttpStatus.NOT_FOUND);
@@ -77,7 +77,15 @@ export class StudentsService {
         const studentEntity = await this.findOneByIdOrThrow(studentId);
         const student = StudentsMapper.toModel(studentEntity);
         student.type = StudentTypeMapper.toModel(studentEntity.type);
-        
+
+        return student;
+    }
+
+    async save(studentEntity: StudentEntity): Promise<Student> {
+        const savedStudentEntity = await this.studentsRepository.save(studentEntity);
+
+        const student = StudentsMapper.toModel(savedStudentEntity);
+        student.type = StudentTypeMapper.toModel(studentEntity.type);
         return student;
     }
 }

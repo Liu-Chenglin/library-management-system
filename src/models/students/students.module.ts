@@ -11,6 +11,7 @@ import {StudentTypeRepository} from "./student-type.repository";
     imports: [TypeOrmModule.forFeature([StudentEntity, StudentTypeEntity])],
     controllers: [StudentsController],
     providers: [StudentsService, StudentsRepository, StudentTypeRepository],
+    exports: [StudentsService]
 })
 export class StudentsModule {
 }
