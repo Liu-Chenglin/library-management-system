@@ -5,6 +5,7 @@ import {BooksService} from "../../models/books/books.service";
 import {BookStatus} from "../../common/constants/books.constant";
 import {BookEntity} from "../../models/books/entities/book.entity";
 import {StudentEntity} from "../../models/students/entities/student.entity";
+import {DateUtil} from "../../utils/date.util";
 
 @Injectable()
 export class BookBorrowingService {
@@ -21,16 +22,11 @@ export class BookBorrowingService {
         this.validateBorrowingOrThrow(bookEntity, studentEntity);
 
         await this.updateStudentAndBookStatus(bookEntity, studentEntity);
-
-        const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + studentEntity.type.maxLoanPeriod);
-
         const createdBookBorrowingEntity = this.bookBorrowingRepository.create({
             student: studentEntity,
             book: bookEntity,
-            dueDate: dueDate,
+            dueDate: DateUtil.getFutureDate(new Date(), studentEntity.type.maxLoanPeriod),
         });
-
         await this.bookBorrowingRepository.save(createdBookBorrowingEntity);
     }
 
@@ -44,7 +40,6 @@ export class BookBorrowingService {
     private validateBorrowingOrThrow(bookEntity: BookEntity, studentEntity: StudentEntity) {
         if (BookStatus.AVAILABLE !== bookEntity.status) {
             throw new HttpException("Book is not available", HttpStatus.BAD_REQUEST);
-
         }
         if (studentEntity.availableQuota <= 0) {
             throw new HttpException("Student don't have available quota", HttpStatus.BAD_REQUEST);
