@@ -6,9 +6,10 @@ import {BooksRepository} from "./books.repository";
 import {CreateBookDto} from "./dto/create-book.dto";
 import {BookEntity} from "./entities/book.entity";
 import {BooksMapper} from "../../utils/mappers/books/books.mapper";
-import {HttpException} from "@nestjs/common";
+import {HttpException, HttpStatus} from "@nestjs/common";
 import {BookInformation} from "./book-information";
 import {BookInformationMapper} from "../../utils/mappers/books/book-information.mapper";
+import {BookStatus} from "../../common/constants/books.constant";
 
 describe('BooksService', () => {
     let service: BooksService;
@@ -117,17 +118,17 @@ describe('BooksService', () => {
     });
 
     describe('delete', () => {
+        const bookId = 1;
+        const bookEntity: BookEntity = {
+            id: bookId,
+            status: "available",
+            comment: "test comment",
+            bookInformation: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            deletedAt: null,
+        };
         it('should delete book when book exists', async () => {
-            const bookId = 1;
-            const bookEntity: BookEntity = {
-                id: bookId,
-                status: "test status",
-                comment: "test comment",
-                bookInformation: null,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                deletedAt: null,
-            };
 
             jest.spyOn(booksRepository, "findOneById").mockImplementation(() => Promise.resolve(bookEntity));
             jest.spyOn(booksRepository, "delete").mockImplementation();
@@ -145,6 +146,14 @@ describe('BooksService', () => {
             await expect(service.delete(invalidBookId)).rejects.toThrow(HttpException);
 
             expect(booksRepository.findOneById).toHaveBeenCalledWith(invalidBookId);
+        });
+
+        it('should throw exception when book is borrowed', async () => {
+            bookEntity.status = BookStatus.BORROWED;
+            jest.spyOn(booksRepository, "findOneById").mockImplementation(() => Promise.resolve(bookEntity));
+
+            await expect(service.delete(1)).rejects.toThrow(new HttpException("Cannot delete borrowed book", HttpStatus.BAD_REQUEST));
+            bookEntity.status = BookStatus.AVAILABLE;
         });
     });
 

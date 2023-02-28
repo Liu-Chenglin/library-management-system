@@ -9,6 +9,7 @@ import {BookInformationMapper} from "../../utils/mappers/books/book-information.
 import {UpdateBookDto} from "./dto/update-book.dto";
 import {BookInformation} from "./book-information";
 import {BookEntity} from "./entities/book.entity";
+import {BookStatus} from "../../common/constants/books.constant";
 
 @Injectable()
 export class BooksService {
@@ -30,7 +31,10 @@ export class BooksService {
     }
 
     async delete(bookId: number) {
-        await this.findOneByIdOrThrow(bookId);
+        const bookEntity = await this.findOneByIdOrThrow(bookId);
+        if (BookStatus.BORROWED === bookEntity.status) {
+            throw new HttpException("Cannot delete borrowed book", HttpStatus.BAD_REQUEST);
+        }
         await this.booksRepository.delete(bookId);
     }
 
