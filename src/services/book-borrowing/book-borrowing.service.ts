@@ -14,7 +14,7 @@ export class BookBorrowingService {
                 private readonly studentsService: StudentsService,
                 private readonly booksService: BooksService) {
     }
-
+    
     async borrow(studentId: number, bookId: number) {
         const bookEntity = await this.booksService.findOneByIdOrThrow(bookId);
         const studentEntity = await this.studentsService.findOneByIdOrThrow(studentId);

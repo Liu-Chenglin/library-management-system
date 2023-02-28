@@ -72,9 +72,7 @@ export class BooksService {
         return bookInformationEntity;
     }
 
-    async save(bookEntity: BookEntity): Promise<Book> {
-        const savedBookEntity = await this.booksRepository.save(bookEntity);
-
-        return BooksMapper.toModel(savedBookEntity);
+    async save(bookEntity: BookEntity) {
+        await this.booksRepository.save(bookEntity);
     }
 }
