@@ -46,4 +46,8 @@ export class BookBorrowingService {
             throw new HttpException("Student don't have available quota", HttpStatus.BAD_REQUEST);
         }
     }
+
+    async return(bookId: number) {
+
+    }
 }

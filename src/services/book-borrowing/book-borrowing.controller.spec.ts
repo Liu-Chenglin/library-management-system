@@ -12,6 +12,7 @@ describe('Book Borrowing Controller', () => {
 
     const mockBookBorrowingService = {
         borrow: jest.fn(),
+        return: jest.fn()
     } as unknown as BookBorrowingService;
 
     beforeEach(async () => {
@@ -36,6 +37,14 @@ describe('Book Borrowing Controller', () => {
 
             await request(app.getHttpServer())
                 .post('/students/1/borrow-book?bookId=1')
+                .expect(HttpStatus.OK);
+        });
+    });
+
+    describe('returnBook', () => {
+        it('should return the book when book is normal', async () => {
+            await request(app.getHttpServer())
+                .post('/books/1/return-book')
                 .expect(HttpStatus.OK);
         });
     });

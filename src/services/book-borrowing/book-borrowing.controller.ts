@@ -14,4 +14,10 @@ export class BookBorrowingController {
     async borrowBook(@Param("id") studentId: number, @Query('bookId') bookId: number) {
         await this.bookBorrowingService.borrow(studentId, bookId);
     }
+
+    @Post('/books/:id/return-book')
+    @HttpCode(200)
+    async returnBook(@Param("id") bookId: number) {
+        await this.bookBorrowingService.return(bookId);
+    }
 }
