@@ -28,7 +28,10 @@ export class StudentsService {
     }
 
     async delete(studentId: number) {
-        await this.findOneByIdOrThrow(studentId);
+        const studentEntity = await this.findOneByIdOrThrow(studentId);
+        if (studentEntity.availableQuota !== studentEntity.type.quota) {
+            throw new HttpException("Student still have book to return. Cannot delete this student", HttpStatus.BAD_REQUEST);
+        }
         await this.studentsRepository.delete(studentId);
     }
 

@@ -120,7 +120,7 @@ describe('StudentsService', () => {
             id: 1,
             name: 'Test Student',
             grade: 1,
-            type: null,
+            type: studentTypeEntity,
             availableQuota: 10,
             phone: '13912345678',
             email: 'test.student@example.com',
@@ -147,6 +147,16 @@ describe('StudentsService', () => {
             await expect(studentsService.delete(invalidStudentId)).rejects.toThrow(HttpException);
 
             expect(studentsRepository.findOneById).toHaveBeenCalledWith(invalidStudentId);
+        });
+
+        it('should throw exception when student still have book to return', async function () {
+            studentEntity.availableQuota = 8;
+            jest.spyOn(studentsRepository, "findOneById").mockImplementation(() => Promise.resolve(studentEntity));
+
+
+            await expect(studentsService.delete(1)).rejects
+                .toThrow(new HttpException("Student still have book to return. Cannot delete this student", HttpStatus.BAD_REQUEST));
+            studentEntity.availableQuota = studentTypeEntity.quota;
         });
     });
 
