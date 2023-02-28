@@ -1,6 +1,4 @@
 import {Test} from '@nestjs/testing';
-
-
 import {BookBorrowingService} from './book-borrowing.service';
 import {BooksService} from "../../models/books/books.service";
 import {StudentsService} from "../../models/students/students.service";
@@ -9,6 +7,7 @@ import {BookInformationEntity} from "../../models/books/entities/book-informatio
 import {BookEntity} from "../../models/books/entities/book.entity";
 import {StudentTypeEntity} from "../../models/students/entities/student-type.entity";
 import {HttpException, HttpStatus} from "@nestjs/common";
+import {BookStatus} from "../../common/constants/books.constant";
 
 describe('BookBorrowingService', () => {
     let booksService: BooksService;
@@ -73,7 +72,7 @@ describe('BookBorrowingService', () => {
         };
         const bookEntity: BookEntity = {
             id: 1,
-            status: "available",
+            status: BookStatus.AVAILABLE,
             comment: "test comment",
             bookInformation: bookInformationEntity,
             createdAt: new Date(),
@@ -125,7 +124,7 @@ describe('BookBorrowingService', () => {
                 dueDate: expect.any(Date),
             }));
             expect(booksService.save).toBeCalledWith(expect.objectContaining({
-                status: 'borrowed',
+                status: BookStatus.BORROWED,
             }));
             expect(studentsService.save).toBeCalledWith(expect.objectContaining({
                 availableQuota: 9,
@@ -133,12 +132,12 @@ describe('BookBorrowingService', () => {
         });
 
         it('should throw exception when book is not available', async () => {
-            bookEntity.status = 'borrowed';
+            bookEntity.status = BookStatus.BORROWED;
             jest.spyOn(booksService, 'findOneByIdOrThrow').mockResolvedValue(bookEntity);
             jest.spyOn(studentsService, 'findOneByIdOrThrow').mockResolvedValue(studentEntity);
 
             await expect(bookBorrowingService.borrow(1, 1)).rejects.toThrow(new HttpException("Book is not available", HttpStatus.BAD_REQUEST));
-            bookEntity.status = 'available';
+            bookEntity.status = BookStatus.AVAILABLE;
         })
 
         it('should throw exception when student is not available', async () => {

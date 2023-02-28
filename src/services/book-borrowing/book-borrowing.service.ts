@@ -2,6 +2,7 @@ import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
 import {BookBorrowingRepository} from "./entities/book-borrowing.repository";
 import {StudentsService} from "../../models/students/students.service";
 import {BooksService} from "../../models/books/books.service";
+import {BookStatus} from "../../common/constants/books.constant";
 
 @Injectable()
 export class BookBorrowingService {
@@ -14,7 +15,7 @@ export class BookBorrowingService {
     async borrow(studentId: number, bookId: number) {
         const bookEntity = await this.booksService.findOneByIdOrThrow(bookId);
 
-        if ('available' !== bookEntity.status) {
+        if (BookStatus.AVAILABLE !== bookEntity.status) {
             throw new HttpException("Book is not available", HttpStatus.BAD_REQUEST);
         }
 
@@ -23,7 +24,7 @@ export class BookBorrowingService {
             throw new HttpException("Student don't have available quota", HttpStatus.BAD_REQUEST);
         }
 
-        bookEntity.status = 'borrowed';
+        bookEntity.status = BookStatus.BORROWED;
         await this.booksService.save(bookEntity);
         studentEntity.availableQuota -= 1;
         await this.studentsService.save(studentEntity);
