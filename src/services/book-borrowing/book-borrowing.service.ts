@@ -8,6 +8,7 @@ import {StudentEntity} from "../../models/students/entities/student.entity";
 import {DateUtil} from "../../utils/date.util";
 import {BookBorrowingOperation, BookBorrowingResult} from "../../common/constants/book-borrowing.constant";
 import {BookReturnResponseDto} from "./dto/book-return-response.dto";
+import {BookBorrowingEntity} from "./entities/book-borrowing.entity";
 
 @Injectable()
 export class BookBorrowingService {
@@ -66,24 +67,32 @@ export class BookBorrowingService {
         const studentEntity = await this.studentsService.findOneByIdOrThrow(bookBorrowingEntity.student.id);
 
         if (bookEntity.status === BookStatus.BORROWED) {
-            const bookReturnResponseDto = new BookReturnResponseDto(false, 0, 0, 0);
-            const numberOfDaysOverdue = DateUtil.getDayDiff(bookBorrowingEntity.dueDate, new Date());
+            const bookReturnResponseDto = this.getBookReturnResponse(bookBorrowingEntity, bookEntity);
 
-            if (numberOfDaysOverdue > 0) {
-                bookReturnResponseDto.isOverdue = true;
-                bookReturnResponseDto.numberOfDaysOverdue = numberOfDaysOverdue;
-                bookReturnResponseDto.lateFeePerDay = bookEntity.bookInformation.lateFeePerDay;
-                bookReturnResponseDto.lateFee = numberOfDaysOverdue * bookEntity.bookInformation.lateFeePerDay;
-            }
-
-            bookBorrowingEntity.result = BookBorrowingResult.RETURNED;
-            bookBorrowingEntity.returnDate = new Date();
-
+            await this.updateBookBorrowingRecordAsReturned(bookBorrowingEntity);
             await this.updateStudentAndBookStatus(BookBorrowingOperation.RETURN, bookEntity, studentEntity);
-            await this.bookBorrowingRepository.save(bookBorrowingEntity);
             return bookReturnResponseDto;
         } else {
             throw new HttpException("The book cannot be returned, since it is " + bookEntity.status, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private getBookReturnResponse(bookBorrowingEntity: BookBorrowingEntity, bookEntity: BookEntity) {
+        const bookReturnResponseDto = new BookReturnResponseDto(false, 0, 0, 0);
+
+        const numberOfDaysOverdue = DateUtil.getDayDiff(bookBorrowingEntity.dueDate, new Date());
+        if (numberOfDaysOverdue > 0) {
+            bookReturnResponseDto.isOverdue = true;
+            bookReturnResponseDto.numberOfDaysOverdue = numberOfDaysOverdue;
+            bookReturnResponseDto.lateFeePerDay = bookEntity.bookInformation.lateFeePerDay;
+            bookReturnResponseDto.lateFee = numberOfDaysOverdue * bookEntity.bookInformation.lateFeePerDay;
+        }
+        return bookReturnResponseDto;
+    }
+
+    private async updateBookBorrowingRecordAsReturned(bookBorrowingEntity: BookBorrowingEntity) {
+        bookBorrowingEntity.result = BookBorrowingResult.RETURNED;
+        bookBorrowingEntity.returnDate = new Date();
+        await this.bookBorrowingRepository.save(bookBorrowingEntity);
     }
 }
