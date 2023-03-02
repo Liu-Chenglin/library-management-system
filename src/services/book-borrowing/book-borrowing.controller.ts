@@ -1,8 +1,10 @@
 import {Controller, HttpCode, Param, Post, Query, UseFilters} from "@nestjs/common";
 import {HttpExceptionFilter} from "../../common/exceptions/handlers/http-exception.filter";
 import {BookBorrowingService} from "./book-borrowing.service";
+import {ApiTags} from "@nestjs/swagger";
 
 @Controller()
+@ApiTags("Book Borrowing Service")
 @UseFilters(new HttpExceptionFilter())
 export class BookBorrowingController {
 

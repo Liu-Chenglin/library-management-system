@@ -18,8 +18,10 @@ import {CreateBookDto} from "./dto/create-book.dto";
 import {HttpExceptionFilter} from "../../common/exceptions/handlers/http-exception.filter";
 import {UpdateBookDto} from "./dto/update-book.dto";
 import {BookInformation} from "./book-information";
+import {ApiTags} from "@nestjs/swagger";
 
 @Controller('/books')
+@ApiTags('Book Management')
 @UseFilters(new HttpExceptionFilter())
 export class BooksController {
     constructor(private readonly booksService: BooksService) {

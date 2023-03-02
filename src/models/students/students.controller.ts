@@ -15,9 +15,11 @@ import {HttpExceptionFilter} from "../../common/exceptions/handlers/http-excepti
 import {StudentsService} from "./students.service";
 import {CreateStudentDto} from "./dto/create-student.dto";
 import {Student} from "./student";
+import {ApiTags} from "@nestjs/swagger";
 
 
 @Controller('/students')
+@ApiTags('Student Management')
 @UseFilters(new HttpExceptionFilter())
 export class StudentsController {
     constructor(private readonly studentsService: StudentsService) {
