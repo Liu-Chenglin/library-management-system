@@ -11,7 +11,8 @@ export class BooksRepository {
 
     async findOneById(id: number): Promise<BookEntity | undefined> {
         return this.repository.findOne({
-            where: {id}
+            where: {id},
+            relations: ['bookInformation']
         });
     }
 

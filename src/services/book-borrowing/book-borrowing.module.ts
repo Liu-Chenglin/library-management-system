@@ -3,7 +3,7 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {BookBorrowingController} from "./book-borrowing.controller";
 import {BookBorrowingService} from "./book-borrowing.service";
 import {BookBorrowingEntity} from "./entities/book-borrowing.entity";
-import {BookBorrowingRepository} from "./entities/book-borrowing.repository";
+import {BookBorrowingRepository} from "./book-borrowing.repository";
 import {StudentsModule} from "../../models/students/students.module";
 import {BooksModule} from "../../models/books/books.module";
 

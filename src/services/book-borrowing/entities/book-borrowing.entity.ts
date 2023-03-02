@@ -17,8 +17,8 @@ export class BookBorrowingEntity extends BaseEntity {
     @Column()
     dueDate: Date;
 
-    @Column({default: false})
-    returned: boolean;
+    @Column({nullable: true})
+    result: string;
 
     @Column({nullable: true})
     returnDate: Date;

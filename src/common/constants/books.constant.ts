@@ -1,4 +1,6 @@
 export const BookStatus = {
     AVAILABLE: 'available',
-    BORROWED: 'borrowed'
+    BORROWED: 'borrowed',
+    DAMAGED: 'damaged',
+    LOST: 'lost'
 };
