@@ -2,6 +2,7 @@ import {Controller, HttpCode, Param, Post, Query, UseFilters} from "@nestjs/comm
 import {HttpExceptionFilter} from "../../common/exceptions/handlers/http-exception.filter";
 import {BookBorrowingService} from "./book-borrowing.service";
 import {ApiTags} from "@nestjs/swagger";
+import {BookReturnResponseDto} from "./dto/book-return-response.dto";
 
 @Controller()
 @ApiTags("Book Borrowing Service")
@@ -19,7 +20,7 @@ export class BookBorrowingController {
 
     @Post('/books/:id/return-book')
     @HttpCode(200)
-    async returnBook(@Param("id") bookId: number) {
-        await this.bookBorrowingService.return(bookId);
+    async returnBook(@Param("id") bookId: number): Promise<BookReturnResponseDto> {
+        return await this.bookBorrowingService.return(bookId);
     }
 }

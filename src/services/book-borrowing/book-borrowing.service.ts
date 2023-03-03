@@ -10,6 +10,7 @@ import {BookBorrowingOperation, BookBorrowingResult} from "../../common/constant
 import {BookReturnResponseDto} from "./dto/book-return-response.dto";
 import {BookBorrowingEntity} from "./entities/book-borrowing.entity";
 
+
 @Injectable()
 export class BookBorrowingService {
 
@@ -61,9 +62,10 @@ export class BookBorrowingService {
         }
     }
 
-    async return(bookId: number) {
+    async return(bookId: number): Promise<BookReturnResponseDto> {
         const bookEntity = await this.booksService.findOneByIdOrThrow(bookId);
         const bookBorrowingEntity = await this.bookBorrowingRepository.findOneByBookId(bookId);
+        if (bookBorrowingEntity === null) throw new HttpException("Invalid book to return", HttpStatus.BAD_REQUEST);
         const studentEntity = await this.studentsService.findOneByIdOrThrow(bookBorrowingEntity.student.id);
 
         if (bookEntity.status === BookStatus.BORROWED) {
