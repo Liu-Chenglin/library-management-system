@@ -13,7 +13,7 @@ import {BookBorrowingModule} from "./services/book-borrowing/book-borrowing.modu
     imports: [BooksModule, StudentsModule, BookBorrowingModule, TypeOrmModule.forRoot({
         type: 'postgres',
         host: 'localhost',
-        port: 5432,
+        port: 15432,
         username: 'postgres',
         password: 'postgres',
         database: 'library_management_system',
