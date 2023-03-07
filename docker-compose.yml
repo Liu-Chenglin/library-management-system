@@ -12,4 +12,20 @@ services:
     ports:
       - '15432:5432'
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - pgsql_data:/var/lib/postgresql/data
+
+  library-management-system-app:
+    build: .
+    image: library-management-system-app:1.0
+    container_name: library-management-system-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - library-management-system-postgresql
+
+volumes:
+  pgsql_data:
+    driver: local
