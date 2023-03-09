@@ -2,7 +2,7 @@
   "name": "library-management-system",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Charlie",
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
