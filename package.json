@@ -77,6 +77,6 @@
     "testEnvironment": "node"
   },
   "publishConfig": {
-    "@Liu-Chenglin:registry": "https://npm.pkg.github.com"
+    "Liu-Chenglin:registry": "https://npm.pkg.github.com"
   }
 }
