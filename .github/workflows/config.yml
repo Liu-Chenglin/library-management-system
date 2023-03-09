@@ -14,14 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
+      - name: Build and start containers
+        run: docker-compose up -d
 
       - name: Run tests
-        run: npm test
+        run: docker-compose run library-management-system-app npm test
+
+      - name: Stop containers
+        run: docker-compose down
