@@ -1,8 +1,8 @@
 {
-  "name": "library-management-system",
+  "name": "@Liu-Chenglin/library-management-system",
   "version": "0.0.1",
   "description": "",
-  "author": "Charlie",
+  "author": "Liu-Chenglin",
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
